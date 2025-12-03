@@ -6,91 +6,53 @@
 <title>POKÉMON COMMAND CENTER // LIVE</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#050505;--card-bg:rgba(15,20,30,0.65);--glass-border:rgba(255,255,255,0.08);
-    --cyan:#00f0ff;--purple:#bf00ff;--gold:#ffcc00;--red:#ff3333;
-  }
+  :root{--bg:#050505;--card-bg:rgba(15,20,30,0.65);--glass-border:rgba(255,255,255,0.08);
+    --cyan:#00f0ff;--purple:#bf00ff;--gold:#ffcc00;--red:#ff3333;}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:var(--bg);
-    background-image:radial-gradient(circle at 50% 0%,rgba(0,240,255,0.08),transparent 70%),
-      linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
-    background-size:100% 100%,30px 30px,30px 30px;
-    font-family:'Rajdhani',sans-serif;color:#fff;min-height:100vh;
-    display:flex;flex-direction:column;align-items:center;padding:40px 20px;
-  }
+  body{background:var(--bg);background-image:radial-gradient(circle at 50% 0%,rgba(0,240,255,0.08),transparent 70%),
+    linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+    background-size:100% 100%,30px 30px,30px 30px;font-family:'Rajdhani',sans-serif;color:#fff;min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:40px 20px;}
   .header-unit{text-align:center;margin-bottom:50px;}
-  h1{
-    font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;letter-spacing:4px;
-    text-transform:uppercase;background:linear-gradient(180deg,#fff,#999);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    text-shadow:0 0 30px rgba(0,240,255,0.2);
-  }
-  .status-pill{
-    display:inline-flex;align-items:center;gap:12px;padding:8px 24px;
-    background:rgba(0,240,255,0.05);border:1px solid rgba(0,240,255,0.2);
-    border-radius:4px;color:var(--cyan);font-weight:600;letter-spacing:3px;
-    font-size:0.9rem;box-shadow:0 0 20px rgba(0,240,255,0.1);
-  }
-  .status-dot{width:8px;height:8px;background:var(--cyan);border-radius:50%;
-    box-shadow:0 0 10px var(--cyan);animation:blink 2s infinite;}
+  h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;letter-spacing:4px;text-transform:uppercase;
+    background:linear-gradient(180deg,#fff,#999);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    text-shadow:0 0 30px rgba(0,240,255,0.2);}
+  .status-pill{display:inline-flex;align-items:center;gap:12px;padding:8px 24px;background:rgba(0,240,255,0.05);
+    border:1px solid rgba(0,240,255,0.2);border-radius:4px;color:var(--cyan);font-weight:600;letter-spacing:3px;
+    font-size:0.9rem;box-shadow:0 0 20px rgba(0,240,255,0.1);}
+  .status-dot{width:8px;height:8px;background:var(--cyan);border-radius:50%;box-shadow:0 0 10px var(--cyan);animation:blink 2s infinite;}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
-
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));
-    gap:40px;width:100%;max-width:1200px;}
-  .holo-card{
-    position:relative;background:var(--card-bg);border-radius:16px;
-    backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);
-    box-shadow:inset 0 0 0 1px var(--glass-border),0 20px 50px rgba(0,0,0,0.5);
-    overflow:hidden;transition:transform .3s;
-  }
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:40px;width:100%;max-width:1200px;}
+  .holo-card{position:relative;background:var(--card-bg);border-radius:16px;backdrop-filter:blur(25px);
+    box-shadow:inset 0 0 0 1px var(--glass-border),0 20px 50px rgba(0,0,0,0.5);overflow:hidden;transition:transform .3s;}
   .holo-card:hover{transform:translateY(-5px);}
-  .holo-card::after{
-    content:'';position:absolute;inset:0;border-radius:16px;padding:2px;
+  .holo-card::after{content:'';position:absolute;inset:0;border-radius:16px;padding:2px;
     background:conic-gradient(from var(--angle),transparent 40%,var(--border-color) 80%,transparent 100%);
-    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor;mask-composite:exclude;
-    animation:spin 3s linear infinite;z-index:2;
-  }
+    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;
+    mask-composite:exclude;animation:spin 3s linear infinite;z-index:2;}
   @property --angle{syntax:'<angle>';initial-value:0deg;inherits:false;}
   @keyframes spin{to{--angle:360deg}}
-
   .card-body{padding:30px;display:flex;flex-direction:column;height:100%;z-index:3;position:relative;}
-  .card-header{
-    display:flex;justify-content:space-between;align-items:flex-start;
-    margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:20px;
-  }
+  .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;
+    border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:20px;}
   .item-name{font-size:1.6rem;font-weight:700;line-height:1.1;color:#fff;}
   .item-meta{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#888;margin-top:5px;}
   .item-meta strong{color:var(--border-color);}
-  .confidence-ring{
-    width:50px;height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    border-radius:50%;border:2px solid rgba(255,255,255,0.1);font-weight:700;font-size:1rem;
-    background:rgba(0,0,0,0.3);
-  }
+  .confidence-ring{width:50px;height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    border-radius:50%;border:2px solid rgba(255,255,255,0.1);font-weight:700;font-size:1rem;background:rgba(0,0,0,0.3);}
   .conf-label{font-size:0.5rem;opacity:0.7;margin-top:-2px;}
-
-  .static-intel{
-    background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.05);
-    border-radius:6px;padding:15px;margin-bottom:20px;height:100px;display:flex;flex-direction:column;justify-content:center;
-  }
+  .static-intel{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.05);border-radius:6px;
+    padding:15px;margin-bottom:20px;height:100px;display:flex;flex-direction:column;justify-content:center;}
   .intel-title{color:var(--border-color);font-weight:700;font-size:0.8rem;text-transform:uppercase;margin-bottom:5px;}
   .intel-text{font-size:0.85rem;color:#ccc;line-height:1.4;}
-
-  .link-module{
-    margin-top:auto;background:rgba(0,0,0,0.4);border:1px solid var(--border-color);
-    border-radius:8px;padding:15px;display:flex;align-items:center;justify-content:space-between;
-    text-decoration:none;transition:all .3s;position:relative;overflow:hidden;cursor:pointer;
-  }
-  .link-module:hover{
-    background:var(--border-color);box-shadow:0 0 30px var(--btn-glow);
-  }
+  .link-module{margin-top:auto;background:rgba(0,0,0,0.4);border:1px solid var(--border-color);border-radius:8px;
+    padding:15px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;transition:all .3s;cursor:pointer;}
+  .link-module:hover{background:var(--border-color);box-shadow:0 0 30px var(--btn-glow);}
   .link-module:hover .link-title,.link-module:hover .link-sub{color:#000;}
   .link-title{font-weight:700;font-size:1.1rem;color:#fff;text-transform:uppercase;}
   .link-sub{font-family:'JetBrains Mono';font-size:0.65rem;color:var(--border-color);margin-top:2px;}
   .link-icon{font-size:1.2rem;color:#fff;font-weight:bold;}
-
   .theme-purple{--border-color:var(--purple);--btn-glow:rgba(191,0,255,0.5);}
   .theme-gold{--border-color:var(--gold);--btn-glow:rgba(255,204,0,0.5);}
   .theme-cyan{--border-color:var(--cyan);--btn-glow:rgba(0,240,255,0.5);}
@@ -101,10 +63,7 @@
 
 <div class="header-unit">
   <h1>COMMAND CENTER</h1>
-  <div class="status-pill">
-    <div class="status-dot"></div>
-    PACIFIC TIME <span id="clock">--:--:--</span>
-  </div>
+  <div class="status-pill"><div class="status-dot"></div>PACIFIC TIME <span id="clock">--:--:--</span></div>
 </div>
 
 <div class="grid">
@@ -112,17 +71,12 @@
   <!-- LIVE QUEUE -->
   <div class="holo-card theme-cyan" id="queueCard">
     <div class="card-body">
-      <div class="card-header">
-        <div><div class="item-name">QUEUE STATUS</div><div class="item-meta">US • CA • UK</div></div>
-        <div class="confidence-ring" style="color:var(--cyan);border-color:var(--cyan)">—</div>
-      </div>
-      <div class="static-intel">
-        <div class="intel-title">REAL-TIME SCAN</div>
-        <div class="intel-text">Checking every 10s...</div>
-      </div>
+      <div class="card-header"><div><div class="item-name">QUEUE STATUS</div><div class="item-meta">US • CA • UK</div></div>
+        <div class="confidence-ring" style="color:var(--cyan);border-color:var(--cyan)">—</div></div>
+      <div class="static-intel"><div class="intel-title">REAL-TIME SCAN</div><div class="intel-text">Checking every 10s...</div></div>
       <a href="https://www.pokemoncenter.com" target="_blank" class="link-module">
         <div class="link-info"><div class="link-title">OPEN SITE</div><div class="link-sub">POKEMONCENTER.COM</div></div>
-        <div class="link-icon">→</div>
+        <div class="link-icon">Right Arrow</div>
       </a>
     </div>
   </div>
@@ -130,56 +84,34 @@
   <!-- LIVE X FEED -->
   <div class="holo-card theme-purple">
     <div class="card-body">
-      <div class="card-header">
-        <div><div class="item-name">LIVE X FEED</div><div class="item-meta">Last hour</div></div>
-        <div class="confidence-ring" style="color:var(--purple);border-color:var(--purple)">LIVE</div>
-      </div>
+      <div class="card-header"><div><div class="item-name">LIVE X FEED</div><div class="item-meta">Last hour</div></div>
+        <div class="confidence-ring" style="color:var(--purple);border-color:var(--purple)">LIVE</div></div>
       <div class="static-intel" style="height:auto;max-height:220px;overflow-y:auto;" id="xFeed">Loading...</div>
       <div class="link-module" onclick="window.open('https://x.com/search?q=pokemon%20center%20(queue%20OR%20drop%20OR%20restock)&f=live','_blank')">
         <div class="link-info"><div class="link-title">FULL X SEARCH</div><div class="link-sub">REAL-TIME</div></div>
-        <div class="link-icon">→</div>
+        <div class="link-icon">Right Arrow</div>
       </div>
     </div>
   </div>
 
-  <!-- DEC 5 DROP - US/CA -->
+  <!-- ALL CONFIRMED DROPS + WEBSITES -->
   <div class="holo-card theme-gold">
     <div class="card-body">
-      <div class="card-header">
-        <div><div class="item-name">DEC 5 DROP</div><div class="item-meta">10:00 AM PT • US/CA</div></div>
-        <div class="confidence-ring" style="color:var(--gold);border-color:var(--gold)">100%</div>
-      </div>
-      <div class="static-intel">
-        <div class="intel-title">CONFIRMED PRODUCTS</div>
-        <div class="intel-text">
-          Holiday Calendar 2025 • Mega Venusaur Premium Collection<br>
-          Kangaskhan ex Box + heavy restocks
+      <div class="card-header"><div><div class="item-name">ALL CONFIRMED DROPS</div><div class="item-meta">Dec 2025–Jan 2026</div></div>
+        <div class="confidence-ring" style="color:var(--gold);border-color:var(--gold)">99%</div></div>
+      <div class="static-intel" style="height:auto;">
+        <div class="intel-title">SCHEDULE + WEBSITE</div>
+        <div class="intel-text" style="font-size:0.88rem;line-height:1.6;">
+          <strong>Dec 5 • 10AM PT (100%)</strong><br>Mega Kangaskhan ex Box • Mega Venusaur PC • Holiday Calendar 2025<br><strong>→ pokemoncenter.com (US/CA)</strong><br><br>
+          <strong>Dec 10 • 9AM GMT (90%)</strong><br>Eevee Collection Merch<br><strong>→ pokemoncenter.com/en-gb (UK)</strong><br><br>
+          <strong>Dec 12 (75%)</strong><br>Battle Partners SV9a Restock (JP lottery)<br><strong>→ pokemoncenter-online.com (JP)</strong><br><br>
+          <strong>Late Dec (80%)</strong><br>Mega Evolution: Ascended Heroes Preorders<br><strong>→ pokemoncenter.com (US/CA)</strong><br><br>
+          <strong>Jan 17, 2026 (80%)</strong><br>Prismatic Evolutions Restock<br><strong>→ pokemoncenter.com (US/CA)</strong>
         </div>
       </div>
       <a href="https://www.pokemoncenter.com/new-releases" target="_blank" class="link-module">
-        <div class="link-info"><div class="link-title">NEW RELEASES</div><div class="link-sub">POKEMONCENTER.COM (US/CA)</div></div>
-        <div class="link-icon">→</div>
-      </a>
-    </div>
-  </div>
-
-  <!-- DEC 10 DROP - UK -->
-  <div class="holo-card theme-purple">
-    <div class="card-body">
-      <div class="card-header">
-        <div><div class="item-name">DEC 10 DROP</div><div class="item-meta">9:00 AM GMT • UK</div></div>
-        <div class="confidence-ring" style="color:var(--purple);border-color:var(--purple)">90%</div>
-      </div>
-      <div class="static-intel">
-        <div class="intel-title">Eevee Collection</div>
-        <div class="intel-text">
-          Plush, TCG bundles, Café merch<br>
-          US follow-up likely
-        </div>
-      </div>
-      <a href="https://www.pokemoncenter.com/en-gb/new-releases" target="_blank" class="link-module">
-        <div class="link-info"><div class="link-title">UK SITE</div><div class="link-sub">POKEMONCENTER.COM/EN-GB</div></div>
-        <div class="link-icon">→</div>
+        <div class="link-info"><div class="link-title">NEW RELEASES</div><div class="link-sub">POKEMONCENTER.COM</div></div>
+        <div class="link-icon">Right Arrow</div>
       </a>
     </div>
   </div>
@@ -189,9 +121,7 @@
 <script>
   const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
   let queueLive = false;
-  let soundOn = true;
 
-  // Clock
   setInterval(() => {
     const time = new Date().toLocaleTimeString('en-US', {timeZone:'America/Los_Angeles',hour12:false});
     document.getElementById('clock').textContent = time;
@@ -240,8 +170,8 @@
       title.textContent = 'QUEUE LIVE';
       intel.textContent = 'Virtual queue active — site under load!';
       card.className = 'holo-card theme-red';
-      if (soundOn) sound.play();
-      if (Notification.permission==='granted') new Notification('QUEUE LIVE!',{body:'Pokémon Center queue detected!'});
+      sound.play();
+      if (Notification.permission==='granted') new Notification('QUEUE LIVE!');
     } else if (!live && queueLive) {
       queueLive = false;
       title.textContent = 'QUEUE STATUS';
