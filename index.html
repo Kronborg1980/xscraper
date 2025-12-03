@@ -4,151 +4,425 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>POKÉMON COMMAND CENTER</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#050505;--card:rgba(15,20,35,0.7);--border:rgba(0,255,255,0.4);
-    --cyan:#00f0ff;--pink:#ff0088;--gold:#ffcc00;--text:#e0ffff;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
-    min-height:100vh;display:flex;flex-direction:column;align-items:center;
-    padding:20px 15px;
-    background-image:radial-gradient(circle at 50% 0%,rgba(0,240,255,0.08),transparent 70%);
-  }
+    :root {
+        --bg-color: #050505;
+        --glass-bg: rgba(20, 25, 40, 0.65);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-highlight: rgba(255, 255, 255, 0.05);
+        --cyan: #00f0ff;
+        --pink: #ff0088;
+        --danger: #ff2a2a;
+        --safe: #00ff9d;
+        --text: #ffffff;
+    }
 
-  header{text-align:center;margin-bottom:30px;}
-  h1{
-    font-family:'Orbitron',sans-serif;font-size:clamp(2.2rem,8vw,4.5rem);letter-spacing:0.25em;
-    background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;text-shadow:0 0 40px rgba(0,240,255,0.4);
-  }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  /* RESPONSIVE QUEUE STATUS */
-  #queue{
-    width:100%;max-width:900px;margin:0 auto 40px;
-    background:var(--card);border:2px solid var(--border);border-radius:24px;
-    padding:28px 20px;text-align:center;backdrop-filter:blur(30px);
-    box-shadow:0 20px 60px rgba(0,0,0,0.6);transition:all 0.6s;
-  }
-  #queue.live{
-    border-color:var(--pink);background:rgba(255,0,136,0.15);
-    box-shadow:0 25px 80px rgba(255,0,136,0.4);animation:pulse 2s infinite;
-  }
-  @keyframes pulse{0%,100%{box-shadow:0 25px 80px rgba(255,0,136,0.4);}
-    50%{box-shadow:0 30px 100px rgba(255,0,136,0.6);}}
-  #queueIcon{font-size:clamp(3.5rem,10vw,5rem);margin-bottom:12px;}
-  #queueLabel{font-family:'Orbitron',sans-serif;font-size:clamp(1.8rem,6vw,2.6rem);font-weight:700;letter-spacing:0.1em;}
+    body {
+        background-color: var(--bg-color);
+        color: var(--text);
+        font-family: 'Rajdhani', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px 120px; /* Extra bottom padding for floating buttons */
+        overflow-x: hidden;
+        /* Dynamic Background */
+        background-image: 
+            radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.15) 0%, transparent 40%),
+            radial-gradient(circle at 90% 80%, rgba(255, 0, 136, 0.15) 0%, transparent 40%);
+    }
 
-  /* RESPONSIVE DROPS CARD */
-  .drops-card{
-    width:100%;max-width:900px;background:var(--card);border:2px solid var(--border);
-    border-radius:24px;padding:32px 24px;backdrop-filter:blur(30px);
-    box-shadow:0 20px 60px rgba(0,0,0,0.6);
-  }
-  .drops-card h2{
-    font-family:'Orbitron',sans-serif;font-size:clamp(1.6rem,5vw,2rem);margin-bottom:24px;
-    color:var(--cyan);text-align:center;
-  }
-  .drop{
-    background:rgba(0,0,0,0.3);border-radius:16px;padding:18px;margin:14px 0;
-    border-left:4px solid var(--cyan);transition:0.3s;font-size:clamp(0.95rem,3vw,1.1rem);
-  }
-  .drop:hover{border-left-color:var(--pink);transform:translateX(6px);}
-  .drop strong{color:var(--cyan);}
-  .site{font-size:0.85rem;margin-top:6px;opacity:0.8;}
+    /* Ambient moving glow */
+    body::before {
+        content: '';
+        position: fixed;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDI1Ii8+Cjwvc3ZnPg=='); 
+        opacity: 0.3;
+        pointer-events: none;
+        z-index: -1;
+    }
 
-  /* RESPONSIVE CONTROLS */
-  .controls{
-    position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:14px;z-index:999;
-  }
-  .btn{
-    width:clamp(55px,12vw,70px);height:clamp(55px,12vw,70px);border-radius:50%;
-    background:var(--card);border:3px solid var(--border);color:var(--text);
-    font-size:clamp(1.4rem,4vw,2rem);cursor:pointer;backdrop-filter:blur(30px);
-    box-shadow:0 10px 30px rgba(0,0,0,0.7);transition:0.4s;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .btn:hover{transform:scale(1.2);box-shadow:0 20px 50px rgba(0,255,255,0.5);}
-  .btn.site{background:linear-gradient(135deg,var(--cyan),var(--pink));color:#000;font-weight:bold;}
+    header { margin-bottom: 40px; text-align: center; position: relative; z-index: 2; }
+    h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        letter-spacing: 0.1em;
+        background: linear-gradient(180deg, #fff, var(--cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.4));
+    }
+
+    /* GLASS CONTAINER UTILITY */
+    .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-top: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(0,0,0,0.2);
+        border-radius: 24px;
+        width: 100%;
+        max-width: 800px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* STATUS ORB */
+    #queue {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* The Glowing Orb */
+    .status-orb {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--safe);
+        box-shadow: 0 0 30px var(--safe), inset 0 0 20px rgba(255,255,255,0.5);
+        margin-bottom: 20px;
+        transition: all 0.5s ease;
+        position: relative;
+    }
+    
+    .status-orb::after {
+        content: '';
+        position: absolute;
+        top: -5px; left: -5px; right: -5px; bottom: -5px;
+        border-radius: 50%;
+        border: 2px solid var(--safe);
+        opacity: 0.5;
+        animation: ripple 2s infinite;
+    }
+
+    #queueLabel {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--safe);
+        text-shadow: 0 0 15px rgba(0, 255, 157, 0.5);
+        transition: color 0.3s;
+    }
+
+    /* LIVE STATE (RED) */
+    #queue.live {
+        border-color: rgba(255, 42, 42, 0.5);
+        box-shadow: 0 0 50px rgba(255, 42, 42, 0.2), inset 0 0 30px rgba(255, 42, 42, 0.1);
+    }
+    #queue.live .status-orb {
+        background: var(--danger);
+        box-shadow: 0 0 50px var(--danger), inset 0 0 20px rgba(255,255,255,0.8);
+    }
+    #queue.live .status-orb::after { border-color: var(--danger); animation-duration: 0.8s; }
+    #queue.live #queueLabel { color: var(--danger); text-shadow: 0 0 20px var(--danger); }
+
+    @keyframes ripple {
+        0% { transform: scale(1); opacity: 0.8; }
+        100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    /* DROPS LIST */
+    .drops-container {
+        padding: 30px;
+    }
+    .drops-container h2 {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--cyan);
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 1px solid var(--glass-border);
+        padding-bottom: 15px;
+    }
+
+    .drop-item {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid transparent;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .drop-item:hover {
+        background: rgba(255,255,255,0.07);
+        border-color: var(--cyan);
+        transform: translateX(10px);
+        box-shadow: -5px 5px 15px rgba(0,0,0,0.3);
+    }
+    .drop-item::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 4px;
+        background: var(--glass-border);
+        transition: 0.3s;
+    }
+    .drop-item:hover::before { background: var(--cyan); }
+
+    .drop-date {
+        color: var(--cyan);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+        font-family: 'Orbitron', sans-serif;
+    }
+    .drop-name { font-size: 1.2rem; font-weight: 500; line-height: 1.4; margin-bottom: 8px; }
+    .drop-site { font-size: 0.9rem; color: #888; font-style: italic; display: flex; align-items: center; gap: 5px; }
+
+    /* FLOATING CONTROLS DOCK */
+    .controls-dock {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 15px;
+        padding: 15px 25px;
+        background: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 50px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        z-index: 100;
+    }
+
+    .btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        background: rgba(255,255,255,0.05);
+        color: white;
+        font-size: 1.5rem;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn:hover {
+        transform: translateY(-5px) scale(1.1);
+        background: rgba(255,255,255,0.15);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+
+    /* Specific Button Styles */
+    .btn.go { color: #000; background: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+    .btn.go:hover { background: #fff; box-shadow: 0 0 25px white; }
+
+    .btn.refresh:hover { color: var(--cyan); }
+    
+    .btn.alarm.active { color: var(--pink); text-shadow: 0 0 10px var(--pink); border: 1px solid var(--pink); }
+    .btn.alarm.muted { color: #555; }
+
+    /* Tooltip */
+    .btn::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: black;
+        padding: 5px 10px;
+        font-size: 0.8rem;
+        border-radius: 5px;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.2s;
+        white-space: nowrap;
+        border: 1px solid #333;
+    }
+    .btn:hover::after { opacity: 1; bottom: 75px; }
+
 </style>
 </head>
 <body>
 
 <header>
-  <h1>COMMAND CENTER</h1>
+    <h1>COMMAND CENTER</h1>
 </header>
 
-<!-- QUEUE STATUS -->
-<div id="queue">
-  <div id="queueIcon">Green Circle</div>
-  <div id="queueLabel">NO QUEUE</div>
+<div id="queue" class="glass-panel">
+    <div class="status-orb" id="statusOrb"></div>
+    <div id="queueLabel">SYSTEM NORMAL</div>
+    <div style="margin-top:10px; opacity:0.6; font-size:0.9rem;">Scanning Pokémon Center Gateway...</div>
 </div>
 
-<!-- ALL DROPS -->
-<div class="drops-card">
-  <h2>ALL CONFIRMED DROPS</h2>
-  <div class="drop"><strong>Dec 5 • 10:00 AM PT (100%)</strong><br>Mega Kangaskhan ex Box • Mega Venusaur PC • Holiday Calendar 2025<br><span class="site">→ pokemoncenter.com (US/CA)</span></div>
-  <div class="drop"><strong>Dec 10 • 9:00 AM GMT (90%)</strong><br>Eevee Collection Merch<br><span class="site">→ pokemoncenter.com/en-gb (UK)</span></div>
-  <div class="drop"><strong>Dec 12 (75%)</strong><br>Battle Partners SV9a Restock<br><span class="site">→ pokemoncenter-online.com (JP)</span></div>
-  <div class="drop"><strong>Late Dec (80%)</strong><br>Mega Evolution: Ascended Heroes Preorders<br><span class="site">→ pokemoncenter.com (US/CA)</span></div>
-  <div class="drop"><strong>Jan 17, 2026 (80%)</strong><br>Prismatic Evolutions Restock<br><span class="site">→ pokemoncenter.com (US/CA)</span></div>
-  <div class="drop"><strong>Feb 20, 2026 (100%)</strong><br>Ascended Heroes Pokémon Center ETB<br><span class="site">→ pokemoncenter.com (US/CA)</span></div>
+<div class="glass-panel drops-container">
+    <h2>Confirmed Drop Schedule</h2>
+    
+    <div class="drop-item">
+        <div class="drop-date">Dec 5 • 10:00 AM PT (100%)</div>
+        <div class="drop-name">Mega Kangaskhan ex Box • Mega Venusaur PC • Holiday Calendar 2025</div>
+        <div class="drop-site"><span>↗</span> pokemoncenter.com (US/CA)</div>
+    </div>
+
+    <div class="drop-item">
+        <div class="drop-date">Dec 10 • 9:00 AM GMT (90%)</div>
+        <div class="drop-name">Eevee Collection Merch</div>
+        <div class="drop-site"><span>↗</span> pokemoncenter.com/en-gb (UK)</div>
+    </div>
+
+    <div class="drop-item">
+        <div class="drop-date">Dec 12 (75%)</div>
+        <div class="drop-name">Battle Partners SV9a Restock</div>
+        <div class="drop-site"><span>↗</span> pokemoncenter-online.com (JP)</div>
+    </div>
+
+    <div class="drop-item">
+        <div class="drop-date">Late Dec (80%)</div>
+        <div class="drop-name">Mega Evolution: Ascended Heroes Preorders</div>
+        <div class="drop-site"><span>↗</span> pokemoncenter.com (US/CA)</div>
+    </div>
+
+    <div class="drop-item">
+        <div class="drop-date">Jan 17, 2026 (80%)</div>
+        <div class="drop-name">Prismatic Evolutions Restock</div>
+        <div class="drop-site"><span>↗</span> pokemoncenter.com (US/CA)</div>
+    </div>
+
+    <div class="drop-item">
+        <div class="drop-date">Feb 20, 2026 (100%)</div>
+        <div class="drop-name">Ascended Heroes Pokémon Center ETB</div>
+        <div class="drop-site"><span>↗</span> pokemoncenter.com (US/CA)</div>
+    </div>
 </div>
 
-<!-- CONTROLS -->
-<div class="controls">
-  <button class="btn site" onclick="window.open('https://www.pokemoncenter.com','_blank')">GO</button>
-  <button class="btn" onclick="location.reload()">Refresh</button>
-  <button class="btn" id="alarmBtn">Bell</button>
+<div class="controls-dock">
+    <button class="btn go" onclick="window.open('https://www.pokemoncenter.com','_blank')" data-tooltip="Launch Site">
+        🚀
+    </button>
+    <button class="btn refresh" onclick="manualScan()" data-tooltip="Force Scan">
+        ⚡
+    </button>
+    <button class="btn alarm active" id="alarmBtn" data-tooltip="Toggle Alarm">
+        🔔
+    </button>
 </div>
 
 <script>
-  const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
-  let queueLive = false;
-  let alarmOn = true;
+    // Audio source
+    const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
+    
+    let queueLive = false;
+    let alarmOn = true;
 
-  document.getElementById('alarmBtn').onclick = () => {
-    alarmOn = !alarmOn;
-    document.getElementById('alarmBtn').textContent = alarmOn ? 'Bell' : 'Bell Off';
-  };
+    // Button Logic
+    const alarmBtn = document.getElementById('alarmBtn');
+    alarmBtn.onclick = () => {
+        alarmOn = !alarmOn;
+        if(alarmOn) {
+            alarmBtn.classList.add('active');
+            alarmBtn.classList.remove('muted');
+            alarmBtn.innerHTML = '🔔';
+            // Play a silent sound to unlock audio context on mobile
+            sound.volume = 0;
+            sound.play().then(() => sound.volume = 1).catch(e => console.log(e));
+        } else {
+            alarmBtn.classList.remove('active');
+            alarmBtn.classList.add('muted');
+            alarmBtn.innerHTML = '🔕';
+        }
+    };
 
-  async function checkQueue() {
-    const urls = ['https://www.pokemoncenter.com/','https://www.pokemoncenter.com/en-ca/','https://www.pokemoncenter.com/en-gb/'];
-    let hits = 0;
-    for (let url of urls) {
-      try {
-        const html = await (await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`)).text();
-        if (html.toLowerCase().includes('queueit') || html.includes('virtual queue')) hits++;
-      } catch(e) {}
+    function manualScan() {
+        const btn = document.querySelector('.refresh');
+        btn.style.transform = "rotate(360deg)";
+        setTimeout(() => btn.style.transform = "none", 500);
+        scan();
     }
-    return hits >= 2;
-  }
 
-  async function scan() {
-    const live = await checkQueue();
-    const q = document.getElementById('queue');
-    const icon = document.getElementById('queueIcon');
-    const label = document.getElementById('queueLabel');
+    async function checkQueue() {
+        // URLs to check
+        const urls = [
+            'https://www.pokemoncenter.com/',
+            'https://www.pokemoncenter.com/en-ca/',
+            'https://www.pokemoncenter.com/en-gb/'
+        ];
+        
+        let hits = 0;
+        
+        // Parallel fetching for speed
+        const checks = urls.map(async (url) => {
+            try {
+                // Using allorigins to bypass CORS
+                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+                const html = await response.text();
+                const lowerHtml = html.toLowerCase();
+                
+                // Detection logic
+                if (lowerHtml.includes('queueit') || lowerHtml.includes('virtual queue') || lowerHtml.includes('queue-it')) {
+                    return true;
+                }
+            } catch(e) {
+                console.warn("Proxy fetch failed for", url);
+            }
+            return false;
+        });
 
-    if (live && !queueLive) {
-      queueLive = true;
-      icon.textContent = 'Red Circle';
-      label.textContent = 'QUEUE LIVE';
-      q.classList.add('live');
-      if (alarmOn) sound.play();
-      if (Notification.permission==='granted') new Notification('QUEUE LIVE!');
-    } else if (!live && queueLive) {
-      queueLive = false;
-      icon.textContent = 'Green Circle';
-      label.textContent = 'NO QUEUE';
-      q.classList.remove('live');
+        const results = await Promise.all(checks);
+        return results.filter(r => r).length >= 1; // If at least 1 site has queue
     }
-  }
 
-  scan();
-  setInterval(scan, 8000);
+    async function scan() {
+        const live = await checkQueue();
+        const q = document.getElementById('queue');
+        const label = document.getElementById('queueLabel');
+
+        if (live && !queueLive) {
+            // State: QUEUE DETECTED
+            queueLive = true;
+            label.textContent = 'QUEUE DETECTED';
+            q.classList.add('live');
+            
+            if (alarmOn) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Audio blocked until interaction"));
+            }
+            
+            if (Notification.permission === 'granted') {
+                new Notification('⚠️ POKÉMON CENTER QUEUE LIVE!');
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission();
+            }
+            
+        } else if (!live && queueLive) {
+            // State: BACK TO NORMAL
+            queueLive = false;
+            label.textContent = 'SYSTEM NORMAL';
+            q.classList.remove('live');
+        }
+    }
+
+    // Initial run
+    scan();
+    // Scan every 10 seconds
+    setInterval(scan, 10000);
+
+    // Request notification permission on load
+    if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+        Notification.requestPermission();
+    }
 </script>
 </body>
 </html>
