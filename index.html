@@ -1,258 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>POKÉMON COMMAND CENTER</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0a0b14;
-      --card: rgba(20, 35, 80, 0.7);
-      --card-hover: rgba(30, 50, 100, 0.85);
-      --border: rgba(0, 255, 255, 0.35);
-      --cyan: #00ffff;
-      --magenta: #ff00aa;
-      --purple: #aa00ff;
-      --text: #e0ffff;
-      --dim: #88d8ff;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      background: var(--bg) url('https://i.imgur.com/8Y5kV1J.jpg') center/cover no-repeat fixed;
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-    }
-    body::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(0,255,255,0.08), transparent 70%);
-      pointer-events: none;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POKÉMON COMMAND CENTER</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600&display=swap');
 
-    header {
-      text-align: center;
-      padding: 60px 20px 40px;
-      position: relative;
-      z-index: 10;
-    }
-    h1 {
-      font-family: 'Orbitron', monospace;
-      font-size: clamp(3.5rem, 10vw, 7rem);
-      letter-spacing: 0.4em;
-      background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 60px rgba(0,255,255,0.6);
-      animation: glow 4s infinite alternate;
-    }
-    @keyframes glow { from { filter: drop-shadow(0 0 40px rgba(0,255,255,0.6)); } to { filter: drop-shadow(0 0 80px rgba(0,255,255,0.9)); } }
+  :root {
+    --bg: #0d1117;
+    --glass: rgba(30,45,90,0.5);
+    --border: rgba(0,255,255,0.4);
+    --cyan: #00ffff;
+    --pink: #ff00aa;
+    --text: #e0ffff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:#0d1117;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background:radial-gradient(circle at 50% 0%,rgba(0,255,255,0.08),transparent 70%),
+               radial-gradient(circle at 20% 80%,rgba(255,0,170,0.08),transparent 70%);
+  }
 
-    /* Floating Pokémon silhouettes */
-    .silhouette {
-      position: absolute;
-      opacity: 0.15;
-      pointer-events: none;
-      animation: float 20s infinite linear;
-    }
-    .s1 { top: 10%; left: 5%; width: 200px; animation-delay: 0s; }
-    .s2 { top: 60%; right: 8%; width: 180px; animation-delay: -8s; }
-    .s3 { bottom: 15%; left: 10%; width: 160px; animation-delay: -15s; }
-    @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-100vh) rotate(360deg); } }
+  header{
+    text-align:center;
+    padding:40px 20px;
+  }
+  h1{
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(2.5rem,9vw,5rem);
+    letter-spacing:0.3em;
+    background:linear-gradient(90deg,#00ffff,#ff00aa);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
 
-    /* Queue Status – PBM-style sleek pill */
-    .queue-pill {
-      position: fixed;
-      top: 140px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      background: var(--card);
-      border: 2px solid var(--border);
-      border-radius: 50px;
-      padding: 16px 32px;
-      backdrop-filter: blur(30px);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-      font-family: 'Orbitron', monospace;
-      font-size: 1.6rem;
-      z-index: 100;
-      transition: all 0.6s ease;
-    }
-    .queue-pill.live {
-      background: linear-gradient(135deg, rgba(255,0,170,0.3), rgba(255,0,100,0.2));
-      border-color: var(--magenta);
-      box-shadow: 0 15px 60px rgba(255,0,170,0.5);
-      animation: pulse 2s infinite;
-    }
-    .queue-icon { font-size: 2.4rem; }
-    .queue-label { font-weight: 700; letter-spacing: 0.1em; }
+  /* Tiny, elegant queue status in the top-right corner */
+  #queue{
+    position:fixed;
+    top:20px;
+    right:20px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--glass);
+    border:1px solid var(--border);
+    border-radius:40px;
+    padding:10px 20px;
+    backdrop-filter:blur(20px);
+    font-family:'Orbitron',sans-serif;
+    font-size:1.2rem;
+    z-index:999;
+    transition:all 0.5s;
+  }
+  #queue.live{background:rgba(255,0,170,0.25);border-color:#ff00aa;box-shadow:0 0 30px rgba(255,0,170,0.4);}
+  #queueIcon{font-size:1.8rem;}
 
-    /* Main Dashboard – PBM-inspired cards */
-    .dashboard {
-      max-width: 1200px;
-      margin: 220px auto 100px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-      gap: 32px;
-      padding: 0 20px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 36px;
-      backdrop-filter: blur(30px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-      transition: all 0.4s ease;
-    }
-    .card:hover {
-      transform: translateY(-12px);
-      box-shadow: 0 30px 80px rgba(0,255,255,0.2);
-    }
-    .card h2 {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      background: linear-gradient(90deg, var(--cyan), var(--magenta));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 20px rgba(0,255,255,0.4);
-    }
+  .container{
+    max-width:1100px;
+    margin:0 auto;
+    padding:20px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+  }
+  @media(max-width:900px){.container{grid-template-columns:1fr;}}
 
-    .intel-item {
-      background: rgba(0,0,0,0.3);
-      padding: 18px;
-      border-radius: 18px;
-      margin: 12px 0;
-      border-left: 4px solid var(--border);
-      font-size: 1.05rem;
-    }
-    .intel-item.fresh {
-      border-left-color: var(--magenta);
-      background: rgba(255,0,170,0.12);
-      box-shadow: 0 0 30px rgba(255,0,170,0.2);
-    }
+  .card{
+    background:var(--glass);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:32px;
+    backdrop-filter:blur(20px);
+    box-shadow:0 15px 40px rgba(0,0,0,0.5);
+  }
+  .card h2{
+    font-family:'Orbitron',sans-serif;
+    font-size:1.6rem;
+    margin-bottom:16px;
+    color:var(--cyan);
+  }
 
-    /* Floating Action Buttons – PBM-style glowing icons only */
-    .fab {
-      position: fixed;
-      bottom: 40px;
-      right: 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      z-index: 200;
-    }
-    .fab-btn {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: var(--card);
-      border: 3px solid var(--border);
-      color: var(--text);
-      font-size: 2rem;
-      cursor: pointer;
-      backdrop-filter: blur(25px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.7);
-      transition: all 0.4s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .fab-btn:hover {
-      transform: scale(1.2) translateY(-8px);
-      box-shadow: 0 25px 60px rgba(0,255,255,0.5);
-    }
-    .fab-btn.site {
-      background: linear-gradient(135deg, var(--cyan), var(--magenta));
-      color: #000;
-      font-weight: bold;
-    }
-  </style>
+  /* FABs – icons only, beautiful */
+  .fab{
+    position:fixed;
+    bottom:30px;
+    right:30px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    z-index:999;
+  }
+  .fab button{
+    width:60px;height:60px;
+    border-radius:50%;
+    background:var(--glass);
+    border:2px solid var(--border);
+    color:var(--text);
+    font-size:1.8rem;
+    cursor:pointer;
+    backdrop-filter:blur(15px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    transition:0.3s;
+  }
+  .fab button:hover{
+    transform:scale(1.2);
+    box-shadow:0 15px 40px rgba(0,255,255,0.4);
+  }
+  .fab .site{
+    background:linear-gradient(135deg,var(--cyan),var(--pink));
+    color:#000;
+    font-weight:bold;
+  }
+</style>
 </head>
 <body>
 
-  <img src="https://i.imgur.com/8Y5kV1J.jpg" class="silhouette s1" alt="">
-  <img src="https://i.imgur.com/8Y5kV1J.jpg" class="silhouette s2" alt="">
-  <img src="https://i.imgur.com/8Y5kV1J.jpg" class="silhouette s3" alt="">
+<header><h1>COMMAND CENTER</h1></header>
 
-  <header>
-    <h1>COMMAND CENTER</h1>
-  </header>
+<div id="queue">
+  <span id="queueIcon">Green Circle</span>
+  <span id="queueLabel">NO QUEUE</span>
+</div>
 
-  <!-- PBM-style queue pill -->
-  <div class="queue-pill" id="queuePill">
-    <div class="queue-icon" id="queueIcon">Green Circle</div>
-    <div class="queue-label" id="queueLabel">NO QUEUE</div>
+<div class="container">
+
+  <div class="card">
+    <h2>NEXT DROP</h2>
+    <p style="font-size:1.2rem;line-height:1.8;">
+      <strong>December 5 – 10:00 AM PT</strong><br>
+      Holiday Calendar 2025 • Mega Venusaur Premium Collection • Kangaskhan ex Box + restocks
+    </p>
+    <p style="margin-top:16px;font-size:0.9rem;opacity:0.7;">Source: PokeBeach / Serebii / PokemonRestocks</p>
   </div>
 
-  <div class="dashboard">
-
-    <div class="card">
-      <h2>NEXT DROP</h2>
-      <p style="font-size:1.2rem;line-height:1.8;">
-        <strong>December 5 • 10:00 AM PT</strong><br>
-        Holiday Calendar 2025 • Mega Venusaur PC • Kangaskhan ex Box<br>
-        + heavy restocks expected
-      </p>
-      <div style="margin-top:20px;font-size:0.9rem;opacity:0.7;">
-        Source: PokeBeach, Serebii, PokemonRestocks
+  <div class="card">
+    <h2>LIVE X FEED</h2>
+    <div id="feed" style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:14px;border-left:4px solid var(--border);">
+        Queue live on US Pokémon Center! • <small>2m ago</small>
+      </div>
+      <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:14px;border-left:4px solid var(--border);">
+        Holiday Calendar confirmed • <small>8m ago</small>
       </div>
     </div>
-
-    <div class="card">
-      <h2>LIVE X INTEL</h2>
-      <div id="intelList">
-        <div class="intel-item fresh">Queue live on US Pokémon Center! • 2m ago</div>
-        <div class="intel-item">Holiday Calendar confirmed • 8m ago</div>
-        <div class="intel-item">Venusaur PC loading... • 15m ago</div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- PBM-style glowing icon-only FABs -->
-  <div class="fab">
-    <button class="fab-btn site" onclick="window.open('https://www.pokemoncenter.com/', '_blank')" title="Open Pokémon Center">Open Site</button>
-    <button class="fab-btn" id="refreshBtn" title="Refresh">Refresh</button>
-    <button class="fab-btn" id="soundBtn" title="Sound">Sound</button>
-    <button class="fab-btn" id="notifyBtn" title="Notifications">Bell</button>
-  </div>
+</div>
 
-  <script>
-    let isQueueLive = false, soundOn = true;
-    const alertSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
+<div class="fab">
+  <button class="site" onclick="window.open('https://www.pokemoncenter.com','_blank')" title="Open Pokémon Center">GO</button>
+  <button onclick="location.reload()" title="Refresh">Refresh</button>
+  <button id="sound" title="Toggle Sound">Sound</button>
+  <button onclick="Notification.requestPermission()" title="Notifications">Bell</button>
+</div>
 
-    document.getElementById('soundBtn').onclick = () => { soundOn = !soundOn; };
-    document.getElementById('notifyBtn').onclick = () => Notification.requestPermission();
-    document.getElementById('refreshBtn').onclick = scan;
-
-    function scan() {
-      const live = Math.random() > 0.95;
-      const pill = document.getElementById('queuePill');
-      const icon = document.getElementById('queueIcon');
-      const label = document.getElementById('queueLabel');
-
-      if (live && !isQueueLive) {
-        isQueueLive = true;
-        icon.textContent = 'Red Circle';
-        label.textContent = 'QUEUE LIVE';
-        pill.classList.add('live');
-        if (soundOn) alertSound.play();
-      } else if (!live) {
-        isQueueLive = false;
-        icon.textContent = 'Green Circle';
-        label.textContent = 'NO QUEUE';
-        pill.classList.remove('live');
-      }
+<script>
+  const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
+  let queueLive = false;
+  setInterval(()=>{
+    const live = Math.random()<0.05;
+    if(live && !queueLive){
+      document.getElementById('queueIcon').textContent = 'Red Circle';
+      document.getElementById('queueLabel').textContent = 'QUEUE LIVE';
+      document.getElementById('queue').classList.add('live');
+      sound.play();
+      queueLive = true;
     }
-
-    scan();
-    setInterval(scan, 10000);
-  </script>
+  },8000);
+</script>
 </body>
 </html>
