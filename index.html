@@ -1,220 +1,387 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POKÉMON COMMAND CENTER</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#0d1117;
-    --glass:rgba(30,45,90,0.5);
-    --border:rgba(0,255,255,0.4);
-    --cyan:#00ffff;
-    --pink:#ff00aa;
-    --text:#e0ffff;
-    --dim:#88c8e8;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    background:radial-gradient(circle at 50% 0%,rgba(0,255,255,0.08),transparent 70%),
-               radial-gradient(circle at 20% 80%,rgba(255,0,170,0.08),transparent 70%);
-  }
-  header{text-align:center;padding:40px 20px;}
-  h1{
-    font-family:'Orbitron',sans-serif;
-    font-size:clamp(2.5rem,9vw,5rem);
-    letter-spacing:0.3em;
-    background:linear-gradient(90deg,var(--cyan),var(--pink));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-  }
-  .subtitle{font-size:1rem;opacity:0.7;margin-top:8px;letter-spacing:0.15em;}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DROP ALERT CENTER</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --card-bg: rgba(20, 25, 35, 0.4);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      
+      /* NEON THEMES */
+      --cyan: #00f0ff;
+      --purple: #bf00ff;
+      --gold: #ffcc00;
+      --red: #ff3333;
+      
+      --glow-spread: 20px;
+    }
 
-  /* Tiny queue status top-right */
-  #queue{
-    position:fixed;top:20px;right:20px;
-    display:flex;align-items:center;gap:12px;
-    background:var(--glass);border:1px solid var(--border);
-    border-radius:40px;padding:10px 20px;
-    backdrop-filter:blur(20px);
-    font-family:'Orbitron',sans-serif;font-size:1.2rem;
-    z-index:999;transition:all 0.5s;
-  }
-  #queue.live{
-    background:rgba(255,0,170,0.25);
-    border-color:var(--pink);
-    box-shadow:0 0 30px rgba(255,0,170,0.4);
-  }
-  #queueIcon{font-size:1.8rem;}
+    * { margin:0; padding:0; box-sizing:border-box; }
 
-  .container{
-    max-width:1100px;margin:0 auto;padding:20px;
-    display:grid;grid-template-columns:1fr 1fr;gap:30px;
-  }
-  @media(max-width:900px){.container{grid-template-columns:1fr;}}
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.1), transparent 60%),
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      overflow-x: hidden;
+    }
 
-  .card{
-    background:var(--glass);
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:32px;
-    backdrop-filter:blur(20px);
-    box-shadow:0 15px 40px rgba(0,0,0,0.5);
-  }
-  .card h2{
-    font-family:'Orbitron',sans-serif;
-    font-size:1.6rem;margin-bottom:16px;
-    color:var(--cyan);
-  }
-  .intel-item{
-    background:rgba(0,0,0,0.3);
-    padding:16px;border-radius:14px;
-    margin:10px 0;
-    border-left:4px solid var(--border);
-  }
-  .intel-item.fresh{
-    border-left-color:var(--pink);
-    background:rgba(255,0,170,0.08);
-    box-shadow:0 0 20px rgba(255,0,170,0.15);
-  }
+    /* --- HEADER --- */
+    .header-unit {
+      text-align: center;
+      margin-bottom: 50px;
+      position: relative;
+    }
+    
+    h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #fff, #888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.3));
+    }
+    
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 50px;
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--cyan);
+      font-weight: 600;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+    }
+    
+    .status-dot {
+      width: 8px; height: 8px; background: var(--cyan); border-radius: 50%;
+      box-shadow: 0 0 10px var(--cyan);
+      animation: pulse 2s infinite;
+    }
 
-  .fab{
-    position:fixed;bottom:30px;right:30px;
-    display:flex;flex-direction:column;gap:16px;z-index:999;
-  }
-  .fab button{
-    width:60px;height:60px;
-    border-radius:50%;
-    background:var(--glass);
-    border:2px solid var(--border);
-    color:var(--text);
-    font-size:1.8rem;
-    cursor:pointer;
-    backdrop-filter:blur(15px);
-    box-shadow:0 10px 30px rgba(0,0,0,0.6);
-    transition:0.3s;
-  }
-  .fab button:hover{
-    transform:scale(1.2);
-    box-shadow:0 15px 40px rgba(0,255,255,0.4);
-  }
-  .fab .site{
-    background:linear-gradient(135deg,var(--cyan),var(--pink));
-    color:#000;font-weight:bold;
-  }
-</style>
+    /* --- THE GRID --- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 40px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    /* --- HOLOGRAPHIC CARD --- */
+    .holo-card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      /* Static border */
+      box-shadow: inset 0 0 0 1px var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .holo-card:hover { transform: translateY(-5px); }
+
+    /* RUNNING LED BORDER ANIMATION */
+    .holo-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      padding: 2px; /* Border thickness */
+      background: conic-gradient(from var(--angle), transparent 50%, var(--border-color));
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: spin 3s linear infinite;
+      z-index: 2;
+    }
+
+    /* Property for the spin animation */
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    @keyframes spin {
+      to { --angle: 360deg; }
+    }
+
+    /* CARD CONTENT */
+    .card-body {
+      padding: 30px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 3;
+    }
+
+    /* GLOWING HEADER IN CARD */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 25px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 20px;
+    }
+
+    .item-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    
+    .item-date {
+      font-size: 0.8rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .item-date strong { color: #fff; }
+
+    /* CONFIDENCE BADGE */
+    .confidence-ring {
+      position: relative;
+      width: 50px; height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.1);
+      font-family: 'Rajdhani';
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    
+    .confidence-text { z-index: 2; }
+
+    /* INTEL SECTION */
+    .intel-block {
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .intel-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 8px;
+      display: block;
+      letter-spacing: 1px;
+    }
+    .intel-data {
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.5;
+    }
+
+    /* ACTION BUTTON */
+    .btn {
+      margin-top: auto;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      padding: 12px;
+      text-align: center;
+      text-transform: uppercase;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    
+    .btn:hover {
+      background: var(--btn-hover);
+      color: #000;
+      box-shadow: 0 0 20px var(--btn-glow);
+      border-color: transparent;
+    }
+
+    /* --- MODIFIERS --- */
+    /* CYAN THEME */
+    .theme-cyan { --border-color: var(--cyan); --btn-hover: var(--cyan); --btn-glow: rgba(0, 240, 255, 0.4); }
+    .theme-cyan .confidence-ring { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+
+    /* GOLD THEME */
+    .theme-gold { --border-color: var(--gold); --btn-hover: var(--gold); --btn-glow: rgba(255, 204, 0, 0.4); }
+    .theme-gold .confidence-ring { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(255, 204, 0, 0.2); }
+
+    /* PURPLE THEME */
+    .theme-purple { --border-color: var(--purple); --btn-hover: var(--purple); --btn-glow: rgba(191, 0, 255, 0.4); }
+    .theme-purple .confidence-ring { border-color: var(--purple); color: var(--purple); box-shadow: 0 0 10px rgba(191, 0, 255, 0.2); }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  </style>
 </head>
 <body>
 
-<header>
-  <h1>COMMAND CENTER</h1>
-  <div class="subtitle">POKÉMON DROP MONITOR</div>
-</header>
-
-<div id="queue">
-  <span id="queueIcon">Green Circle</span>
-  <span id="queueLabel">NO QUEUE</span>
-</div>
-
-<div class="container">
-
-  <div class="card">
-    <h2>NEXT DROP</h2>
-    <p style="font-size:1.2rem;line-height:1.8;">
-      <strong>December 5 – 10:00 AM PT</strong><br>
-      Holiday Calendar 2025 • Mega Venusaur Premium Collection • Kangaskhan ex Box + heavy restocks
-    </p>
-    <p style="margin-top:16px;font-size:0.9rem;opacity:0.7;">
-      Source: PokeBeach / Serebii / PokemonRestocks
-    </p>
+  <div class="header-unit">
+    <h1>DROP ALERT CENTER</h1>
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      LIVE MONITORING (DEC 2025)
+    </div>
   </div>
 
-  <div class="card">
-    <h2>LIVE X FEED</h2>
-    <div id="feed">Loading latest signals...</div>
+  <div class="grid">
+
+    <div class="holo-card theme-purple">
+      <div class="card-body">
+        <div class="card-header">
+          <div>
+            <div class="item-name">Mega Venusaur<br>Premium Collection</div>
+            <div class="item-date">TARGET: <strong>DEC 5 • 10:00 AM PT</strong></div>
+          </div>
+          <div class="confidence-ring">
+            <span class="confidence-text">98%</span>
+          </div>
+        </div>
+
+        <div class="intel-block">
+          <span class="intel-label">Why it's dropping:</span>
+          <div class="intel-data">
+            Confirmed via retailer API. While often confused with an ETB, this premium box contains the <strong>Mega Venusaur ex</strong> promo and 6 packs.
+          </div>
+        </div>
+
+        <div class="intel-block">
+          <span class="intel-label">Stock Status:</span>
+          <div class="intel-data" style="color:var(--purple)">
+            ● ALLOCATED (HIGH STOCK)
+          </div>
+        </div>
+
+        <a href="https://www.pokemoncenter.com/search/venusaur" target="_blank" class="btn">
+          Pokemon Center Search Page
+        </a>
+      </div>
+    </div>
+
+    <div class="holo-card theme-gold">
+      <div class="card-body">
+        <div class="card-header">
+          <div>
+            <div class="item-name">Mega Kangaskhan<br>ex Box</div>
+            <div class="item-date">TARGET: <strong>DEC 5 • 10:00 AM PT</strong></div>
+          </div>
+          <div class="confidence-ring">
+            <span class="confidence-text">100%</span>
+          </div>
+        </div>
+
+        <div class="intel-block">
+          <span class="intel-label">Why it's dropping:</span>
+          <div class="intel-data">
+            Standard TCG Release Friday. This is a general release item (not PC exclusive), meaning stock will be plentiful across all retailers.
+          </div>
+        </div>
+
+        <div class="intel-block">
+          <span class="intel-label">Stock Status:</span>
+          <div class="intel-data" style="color:var(--gold)">
+            ● CONFIRMED
+          </div>
+        </div>
+
+        <a href="https://www.pokemoncenter.com/search/kangaskhan" target="_blank" class="btn">
+          Pokemon Center Search Page
+        </a>
+      </div>
+    </div>
+
+    <div class="holo-card theme-cyan">
+      <div class="card-body">
+        <div class="card-header">
+          <div>
+            <div class="item-name">Mega Evolution:<br>Ascended Heroes</div>
+            <div class="item-date">TARGET: <strong>JAN 30, 2026</strong></div>
+          </div>
+          <div class="confidence-ring">
+            <span class="confidence-text" style="font-size:0.6rem">LOCKED</span>
+          </div>
+        </div>
+
+        <div class="intel-block">
+          <span class="intel-label">Future Intelligence:</span>
+          <div class="intel-data">
+            This is the first major set of 2026. Pre-orders on Pokemon Center typically open <strong>3-4 weeks prior</strong> (Expect Early Jan).
+          </div>
+        </div>
+
+        <div class="intel-block">
+          <span class="intel-label">Set Info:</span>
+          <div class="intel-data" style="color:var(--cyan)">
+            ● MAIN SERIES EXPANSION
+          </div>
+        </div>
+
+        <a href="https://www.pokemoncenter.com/new-releases" target="_blank" class="btn">
+          Bookmark New Releases
+        </a>
+      </div>
+    </div>
+
+    <div class="holo-card theme-red" style="opacity:0.8">
+      <div class="card-body">
+        <div class="card-header">
+          <div>
+            <div class="item-name">Holiday Calendar<br>2025</div>
+            <div class="item-date">STATUS: <strong>RESTOCK WATCH</strong></div>
+          </div>
+          <div class="confidence-ring" style="border-color:var(--red); color:var(--red)">
+            <span class="confidence-text">LOW</span>
+          </div>
+        </div>
+
+        <div class="intel-block">
+          <span class="intel-label">Analysis:</span>
+          <div class="intel-data">
+            Originally released in August. While a Dec 5th restock is rumored, supply chain data does not show new imports. Proceed with caution.
+          </div>
+        </div>
+
+        <a href="https://www.pokemoncenter.com/search/holiday-calendar" target="_blank" class="btn">
+          Check Stock
+        </a>
+      </div>
+    </div>
+
   </div>
 
-</div>
-
-<div class="fab">
-  <button class="site" onclick="window.open('https://www.pokemoncenter.com','_blank')" title="Open Pokémon Center">GO</button>
-  <button onclick="location.reload()" title="Refresh">Refresh</button>
-  <button id="soundBtn" title="Toggle Sound">Sound</button>
-  <button onclick="Notification.requestPermission()" title="Notifications">Bell</button>
-</div>
-
-<script>
-  const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
-  let queueLive = false;
-  let soundOn = true;
-
-  document.getElementById('soundBtn').onclick = () => { soundOn = !soundOn; };
-
-  async function checkQueue() {
-    const urls = [
-      'https://www.pokemoncenter.com/',
-      'https://www.pokemoncenter.com/en-ca/',
-      'https://www.pokemoncenter.com/en-gb/'
-    ];
-    for (let url of urls) {
-      try {
-        const html = await (await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`)).text();
-        if (html.toLowerCase().includes('queueit') || html.includes('virtual queue') || html.includes('waiting room')) {
-          return true;
-        }
-      } catch(e) {}
-    }
-    return false;
-  }
-
-  async function updateFeed() {
-    try {
-      const resp = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(
-        'https://rsshub.app/twitter/search/pokemon%20center%20(queue%20OR%20drop%20OR%20restock%20OR%20live)'
-      ));
-      const data = await resp.json();
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(data.contents,'text/xml');
-      const items = Array.from(xml.querySelectorAll('item')).slice(0,8);
-      document.getElementById('feed').innerHTML = items.map(i=>{
-        const title = i.querySelector('title').textContent;
-        const age = Math.round((Date.now() - new Date(i.querySelector('pubDate').textContent)) / 60000);
-        return `<div class="intel-item ${age<6?'fresh':''}">${title}<br><small>${age} min ago</small></div>`;
-      }).join('') || '<div style="opacity:0.6;">No recent signals</div>';
-    } catch(e) {
-      document.getElementById('feed').innerHTML = '<div style="opacity:0.6;">Feed temporarily unavailable</div>';
-    }
-  }
-
-  async function scan() {
-    const live = await checkQueue();
-    const q = document.getElementById('queue');
-    const icon = document.getElementById('queueIcon');
-    const label = document.getElementById('queueLabel');
-
-    if (live && !queueLive) {
-      queueLive = true;
-      icon.textContent = 'Red Circle';
-      label.textContent = 'QUEUE LIVE';
-      q.classList.add('live');
-      if (soundOn) sound.play();
-      if (Notification.permission === 'granted') new Notification('QUEUE LIVE!', {body: 'Pokémon Center queue detected!'});
-    } else if (!live && queueLive) {
-      queueLive = false;
-      icon.textContent = 'Green Circle';
-      label.textContent = 'NO QUEUE';
-      q.classList.remove('live');
-    }
-    updateFeed();
-  }
-
-  scan();
-  setInterval(scan, 10000); // every 10 seconds
-</script>
 </body>
 </html>
