@@ -170,15 +170,16 @@
     let queueLive = false;
     let alarmOn = true;
 
-    // ================== DYNAMIC DROP CALENDAR (EMBEDDED LIVE DATA) ==================
+    // ================== DYNAMIC DROP CALENDAR (EMBEDDED LIVE DATA - FIXED DATES) ==================
     const dropsData = [
         { date: "2025-12-05", time: "10:00 AM PT", name: "Mega Kangaskhan ex Box • Mega Venusaur ex Premium Collection • Collector Chest Fall 2025 • Repeat Ball Poke Ball Tins", confidence: 100, region: "US/CA", source: "PokeBeach Official" },
         { date: "2025-12-05", time: "9:00 AM GMT", name: "Eevee Collection Merch", confidence: 90, region: "UK", source: "Community Leaks" },
         { date: "2025-12-12", name: "Battle Partners SV9a Restock", confidence: 75, region: "JP", source: "PokeGuardian" },
         { date: "2025-12-19", name: "MEGA Start Deck 100 Battle Collection", confidence: 80, region: "JP", source: "PokeGuardian Rumor" },
-        { date: "2025-12-??", name: "Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection", confidence: 95, region: "Global", source: "PokeBeach Official" },
-        { date: "2025-12-??", name: "Mega Evolution: Ascended Heroes Preorders & ETBs", confidence: 100, region: "US/CA", source: "Recent Restocks Confirmed" },
+        { date: "2025-12-31", name: "Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection", confidence: 100, region: "Global", source: "PokeBeach Official" },
+        { date: "2026-01-08", name: "Mega Evolution: Ascended Heroes Preorders", confidence: 100, region: "US/CA", source: "Official Pokémon Press" },
         { date: "2026-01-17", name: "Prismatic Evolutions Restock", confidence: 80, region: "US/CA", source: "Pattern-Based" },
+        { date: "2026-01-30", name: "Mega Evolution: Ascended Heroes Collections & Tech Stickers", confidence: 100, region: "Global", source: "Official Release" },
         { date: "2026-02-20", name: "Ascended Heroes Pokémon Center ETB", confidence: 100, region: "US/CA", source: "PokeBeach Official" },
         { date: "2026-04-24", name: "Ascended Heroes Booster Bundle", confidence: 95, region: "Global", source: "Backend Listing" }
     ];
@@ -206,8 +207,8 @@
             if (drop.date.includes("??")) {
                 dateStr = drop.date.replace("2025-12-", "Dec ");
             } else {
-                const date = new Date(drop.date + (drop.time ? "T" + drop.time.replace(" AM ", ":00-07:00").replace(" PM ", ":00-07:00").replace(" ", "") : ""));
-                dateStr = date.toLocaleDateString('en-US', { month:'short', day:'numeric' }) +
+                const date = new Date(drop.date + (drop.time ? " " + drop.time.replace(/([AP]M)/, '$1').replace(' PT', '-07:00').replace(' GMT', '+00:00') : ''));
+                dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
                     (drop.time ? ` • ${drop.time}` : "");
             }
 
