@@ -8,7 +8,7 @@
   <style>
     :root {
       --bg: #050505;
-      --card-bg: rgba(15, 20, 30, 0.6);
+      --card-bg: rgba(15, 20, 30, 0.65);
       --glass-border: rgba(255, 255, 255, 0.08);
       
       /* NEON THEMES */
@@ -22,11 +22,10 @@
 
     body {
       background-color: var(--bg);
-      /* Premium Carbon Fiber + Mesh Background */
       background-image: 
         radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08), transparent 70%),
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
       background-size: 100% 100%, 30px 30px, 30px 30px;
       font-family: 'Rajdhani', sans-serif;
       color: #fff;
@@ -170,66 +169,83 @@
     }
     .conf-label { font-size: 0.5rem; opacity: 0.7; margin-top: -2px; }
 
-    /* --- LIVE TERMINAL (Replaces Static Text) --- */
-    .live-terminal {
-      background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.1);
+    /* --- STATIC INFO SECTION --- */
+    .static-intel {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.05);
       border-radius: 6px;
-      padding: 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: #aaa;
-      height: 80px;
-      overflow: hidden;
+      padding: 15px;
       margin-bottom: 20px;
+      height: 100px; /* Fixed height for uniformity */
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      position: relative;
+      justify-content: center;
     }
     
-    .live-terminal::before {
-      content: 'LIVE SYSTEM LOG';
-      position: absolute; top: 0; right: 0;
-      background: var(--border-color);
-      color: #000;
-      font-size: 0.6rem;
-      padding: 2px 6px;
+    .intel-title {
+      color: var(--border-color);
+      font-family: 'Rajdhani', sans-serif;
       font-weight: 700;
-    }
-
-    .log-line { margin-bottom: 2px; }
-    .log-line span { color: var(--border-color); margin-right: 8px; }
-
-    /* BUTTONS */
-    .btn {
-      margin-top: auto;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: #fff;
-      padding: 14px;
-      text-align: center;
+      font-size: 0.8rem;
       text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: 0.3s;
-      display: block;
+      margin-bottom: 5px;
     }
     
-    .btn:hover {
-      background: var(--btn-hover);
-      color: #000;
-      box-shadow: 0 0 25px var(--btn-glow);
-      border-color: transparent;
+    .intel-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      color: #ccc;
+      line-height: 1.4;
     }
+
+    /* --- DIRECT LINK MODULE --- */
+    .link-module {
+      margin-top: auto;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.3s;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .link-module:hover {
+      background: var(--border-color);
+      box-shadow: 0 0 30px var(--btn-glow);
+    }
+
+    .link-module:hover .link-title, 
+    .link-module:hover .link-sub { color: #000; }
+
+    .link-info { display: flex; flex-direction: column; }
+    
+    .link-title { 
+      font-family: 'Rajdhani', sans-serif; 
+      font-weight: 700; 
+      font-size: 1.1rem; 
+      color: #fff;
+      text-transform: uppercase; 
+    }
+    
+    .link-sub { 
+      font-family: 'JetBrains Mono'; 
+      font-size: 0.65rem; 
+      color: var(--border-color); 
+      margin-top: 2px;
+    }
+
+    .link-icon { font-size: 1.2rem; color: #fff; font-weight: bold; }
 
     /* THEMES */
-    .theme-purple { --border-color: var(--purple); --btn-hover: var(--purple); --btn-glow: rgba(191, 0, 255, 0.4); }
-    .theme-gold { --border-color: var(--gold); --btn-hover: var(--gold); --btn-glow: rgba(255, 204, 0, 0.4); }
-    .theme-cyan { --border-color: var(--cyan); --btn-hover: var(--cyan); --btn-glow: rgba(0, 240, 255, 0.4); }
-    .theme-red { --border-color: var(--red); --btn-hover: var(--red); --btn-glow: rgba(255, 51, 51, 0.4); }
+    .theme-purple { --border-color: var(--purple); --btn-glow: rgba(191, 0, 255, 0.5); }
+    .theme-gold { --border-color: var(--gold); --btn-glow: rgba(255, 204, 0, 0.5); }
+    .theme-cyan { --border-color: var(--cyan); --btn-glow: rgba(0, 240, 255, 0.5); }
+    .theme-red { --border-color: var(--red); --btn-glow: rgba(255, 51, 51, 0.5); }
 
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
@@ -261,12 +277,21 @@
           </div>
         </div>
 
-        <div class="live-terminal" id="term-venusaur">
+        <div class="static-intel">
+          <div class="intel-title">Tactical Brief</div>
+          <div class="intel-text">
+            Confirmed Premium Collection (Not ETB). Contains Mega Venusaur ex promo + 6 packs. <strong>Pro Tip:</strong> Click the link below at 9:58 AM PT and refresh.
           </div>
+        </div>
 
-        <a href="https://www.pokemoncenter.com/search/venusaur" target="_blank" class="btn">
-          Search Monitor
+        <a href="https://www.pokemoncenter.com/search/venusaur?sort=newest" target="_blank" class="link-module">
+          <div class="link-info">
+            <div class="link-title">DIRECT ACCESS</div>
+            <div class="link-sub">TARGET: POKEMONCENTER.COM [US]</div>
+          </div>
+          <div class="link-icon">&rarr;</div>
         </a>
+
       </div>
     </div>
 
@@ -284,12 +309,21 @@
           </div>
         </div>
 
-        <div class="live-terminal" id="term-kanga">
+        <div class="static-intel">
+          <div class="intel-title">Tactical Brief</div>
+          <div class="intel-text">
+            Standard Retail Release. Stock numbers are typically high for these boxes. Ships immediately.
           </div>
+        </div>
 
-        <a href="https://www.pokemoncenter.com/search/kangaskhan" target="_blank" class="btn">
-          Search Monitor
+        <a href="https://www.pokemoncenter.com/search/kangaskhan?sort=newest" target="_blank" class="link-module">
+          <div class="link-info">
+            <div class="link-title">DIRECT ACCESS</div>
+            <div class="link-sub">TARGET: POKEMONCENTER.COM [US]</div>
+          </div>
+          <div class="link-icon">&rarr;</div>
         </a>
+
       </div>
     </div>
 
@@ -307,12 +341,21 @@
           </div>
         </div>
 
-        <div class="live-terminal" id="term-set">
+        <div class="static-intel">
+          <div class="intel-title">Future Intel</div>
+          <div class="intel-text">
+            Main Series Set for Q1 2026. Pre-orders on Pokemon Center typically open <strong>3-4 weeks prior</strong> (Watch for Early Jan).
           </div>
+        </div>
 
-        <a href="https://www.pokemoncenter.com/new-releases" target="_blank" class="btn">
-          New Releases
+        <a href="https://www.pokemoncenter.com/new-releases" target="_blank" class="link-module">
+          <div class="link-info">
+            <div class="link-title">NEW RELEASES</div>
+            <div class="link-sub">TARGET: POKEMONCENTER.COM [US]</div>
+          </div>
+          <div class="link-icon">&rarr;</div>
         </a>
+
       </div>
     </div>
 
@@ -321,7 +364,7 @@
         <div class="card-header">
           <div>
             <div class="item-name">Holiday Calendar</div>
-            <div class="item-meta">STATUS: <strong>MONITORING</strong></div>
+            <div class="item-meta">STATUS: <strong>RESTOCK WATCH</strong></div>
             <div class="item-meta">SKU: <strong>290-77112</strong></div>
           </div>
           <div class="confidence-ring" style="color:var(--red); border-color:var(--red)">
@@ -330,89 +373,34 @@
           </div>
         </div>
 
-        <div class="live-terminal" id="term-holiday">
+        <div class="static-intel">
+          <div class="intel-title">Restock Advisory</div>
+          <div class="intel-text">
+            Original release was August 2025. Restocks are random and unconfirmed. Use link to check manually.
           </div>
+        </div>
 
-        <a href="https://www.pokemoncenter.com/search/holiday-calendar" target="_blank" class="btn">
-          Check Stock
+        <a href="https://www.pokemoncenter.com/search/holiday-calendar" target="_blank" class="link-module">
+          <div class="link-info">
+            <div class="link-title">CHECK STOCK</div>
+            <div class="link-sub">TARGET: POKEMONCENTER.COM [US]</div>
+          </div>
+          <div class="link-icon">&rarr;</div>
         </a>
+
       </div>
     </div>
 
   </div>
 
   <script>
-    // --- CLOCK ---
+    // --- REAL TIME CLOCK ---
     setInterval(() => {
       const now = new Date();
       // Using en-US to force Pacific Time display regardless of user location
       const time = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour12: false });
       document.getElementById('clock').innerText = time;
     }, 1000);
-
-    // --- TERMINAL SIMULATION ENGINE ---
-    
-    // Different "Log Personalities" for different cards
-    const logData = {
-      venusaur: [
-        "Pinging SKU 290-85472...",
-        "CDN Asset: 200 OK (Verified)",
-        "Rate Limit: Normal",
-        "Frontend Status: Hidden",
-        "Backend Stock: > 5000 units"
-      ],
-      kanga: [
-        "Retailer API: Active",
-        "Global Distribution: Confirmed",
-        "Release Date Check: PASS",
-        "Price Check: $21.99"
-      ],
-      set: [
-        "Set ID: SV09 detected",
-        "Pre-order window: CLOSED",
-        "Assets: Placeholder",
-        "Monitoring /new-releases"
-      ],
-      holiday: [
-        "Scan Cycle: 450ms",
-        "Inventory Check: NULL",
-        "Import DB: No new manifest",
-        "Previous Release: Aug 2025",
-        "Status: Waiting for signal..."
-      ]
-    };
-
-    function updateTerminal(id, logs) {
-      const el = document.getElementById(id);
-      
-      // Clear every 10 seconds to keep it fresh
-      if(el.children.length > 4) el.innerHTML = '';
-
-      const now = new Date();
-      const ts = now.toLocaleTimeString('en-US', { hour12:false });
-      const msg = logs[Math.floor(Math.random() * logs.length)];
-
-      const line = document.createElement('div');
-      line.className = 'log-line';
-      line.innerHTML = `<span>[${ts}]</span> ${msg}`;
-      
-      el.appendChild(line);
-      el.scrollTop = el.scrollHeight; // Auto scroll to bottom
-    }
-
-    // Initialize Loops
-    // We randomize the intervals so they don't all update at the exact same millisecond (looks more natural)
-    setInterval(() => updateTerminal('term-venusaur', logData.venusaur), 2500);
-    setInterval(() => updateTerminal('term-kanga', logData.kanga), 3200);
-    setInterval(() => updateTerminal('term-set', logData.set), 4100);
-    setInterval(() => updateTerminal('term-holiday', logData.holiday), 2800);
-
-    // Initial population
-    updateTerminal('term-venusaur', logData.venusaur);
-    updateTerminal('term-kanga', logData.kanga);
-    updateTerminal('term-set', logData.set);
-    updateTerminal('term-holiday', logData.holiday);
-
   </script>
 </body>
 </html>
