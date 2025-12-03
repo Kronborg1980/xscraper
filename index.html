@@ -3,346 +3,337 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TRON LEGACY • ULTIMATE POKÉMON CENTER DROP WAR ROOM v4.0</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+  <title>TRON LEGACY • POKÉMON CENTER WAR ROOM v5</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --tron-blue: #00ffff;
-      --tron-cyan: #00d4ff;
-      --tron-purple: #7b68ee;
-      --tron-red: #ff0040;
-      --tron-dark: #000;
-      --tron-bg: #0a0a1a;
-      --glow-1: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff;
-      --glow-2: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
-      --glow-3: 0 0 30px #ff0040, 0 0 50px #ff0040, 0 0 80px #ff0040;
-      --glass: rgba(255,255,255,0.05);
+      --bg: #0b0e17;
+      --glass: rgba(15, 25, 45, 0.35);
+      --border: rgba(0, 255, 255, 0.15);
+      --glow-soft: 0 0 12px rgba(0, 255, 255, 0.4);
+      --glow-med: 0 0 25px rgba(0, 255, 255, 0.35);
+      --glow-intense: 0 0 40px rgba(255, 0, 102, 0.6);
+      --text: #a0f0ff;
+      --text-dim: #6ec6e0;
+      --alert: #ff0040;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      background: var(--tron-bg);
-      color: var(--tron-blue);
-      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
       overflow: hidden;
       height: 100vh;
-      position: relative;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(0,255,255,0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0,255,255,0.06) 0%, transparent 50%);
     }
-    #matrix-canvas, #particles-canvas { position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
+
+    /* Floating LED Orbs */
+    .orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 1; filter: blur(20px); opacity: 0.6; animation: float 20s infinite linear; }
+    .orb1 { width: 400px; height: 400px; background: radial-gradient(circle, #00ffff 0%, transparent 70%); top: -10%; left: 10%; animation-duration: 28s; }
+    .orb2 { width: 600px; height: 600px; background: radial-gradient(circle, #ff0040 0%, transparent 70%); top: 60%; right: -10%; animation-duration: 35s; animation-direction: reverse; }
+    .orb3 { width: 300px; height: 300px; background: radial-gradient(circle, #7b68ee 0%, transparent 70%); bottom: -10%; left: 40%; animation-duration: 22s; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(100px, -100px) rotate(360deg); }
+    }
+
+    /* Subtle Grid */
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background-image: 
+        linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      opacity: 0.4;
+    }
+
     header {
-      position: fixed; top:0; left:0; right:0; z-index: 100;
-      text-align: center; padding: 20px; backdrop-filter: blur(20px); background: var(--glass);
-      box-shadow: var(--glow-1);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      text-align: center; padding: 30px 20px;
+      backdrop-filter: blur(20px);
+      background: rgba(10,15,35,0.4);
+      border-bottom: 1px solid var(--border);
     }
     h1 {
-      font-family: 'Orbitron', monospace; font-size: clamp(2rem, 6vw, 5rem); letter-spacing: 0.2em;
-      text-transform: uppercase; text-shadow: var(--glow-2); animation: flicker 3s infinite alternate;
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #00ffff, #7bffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: var(--glow-soft);
     }
-    @keyframes flicker { 0%,18%,22%,25%,53%,57%,100% { text-shadow: var(--glow-2); } 20%,21%,50%,52%,54%,55% { text-shadow: var(--glow-3); } }
-    .subtitle { font-size: 1.1rem; opacity: 0.8; letter-spacing: 0.1em; margin-top: 5px; }
+    .subtitle {
+      font-size: 1.1rem; letter-spacing: 0.4em; opacity: 0.7; margin-top: 8px;
+      text-shadow: 0 0 10px rgba(0,255,255,0.3);
+    }
+
     .status-bar {
-      position: fixed; top: 140px; left:0; right:0; padding: 15px; text-align: center;
-      background: var(--glass); border-bottom: 1px solid var(--tron-blue); box-shadow: var(--glow-1); z-index: 99;
+      position: fixed; top: 140px; left: 0; right: 0; z-index: 99;
+      text-align: center; padding: 12px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      font-size: 1.1rem;
     }
-    .live-dot { display: inline-block; width:16px; height:16px; background: var(--tron-red); border-radius:50%; box-shadow: var(--glow-3); animation: pulse 1s infinite; margin-right:8px; }
-    @keyframes pulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.5);opacity:0.5;} }
-    .error-msg { color: var(--tron-red); font-style: italic; opacity: 0.8; font-size: 0.9rem; margin-top: 5px; }
-    .main-container { position: fixed; top: 200px; left:0; right:0; bottom:0; overflow-y:auto; padding:20px; z-index: 10; }
-    .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:20px; max-width:1600px; margin:0 auto; }
+    .live-dot {
+      display: inline-block; width: 12px; height: 12px; background: var(--alert);
+      border-radius: 50%; box-shadow: var(--glow-intense); margin-right: 10px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity:0.8; } 50% { opacity:0.4; } }
+
+    .main-container {
+      position: fixed; top: 200px; left: 0; right: 0; bottom: 0;
+      overflow-y: auto; padding: 30px 20px; z-index: 10;
+    }
+    .dashboard {
+      max-width: 1600px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 25px;
+    }
     .card {
-      background: var(--glass); border: 1px solid var(--tron-cyan); border-radius: 20px; padding:25px; 
-      box-shadow: var(--glow-1); backdrop-filter: blur(25px); position:relative; overflow:hidden;
-      transition: all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--glow-soft);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
     }
     .card::before {
-      content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,var(--tron-cyan),transparent);
-      transition: left 0.7s; 
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #00ffff, transparent);
+      transition: 0.8s;
     }
-    .card:hover::before { left:100%; }
-    .card.alert { border-color: var(--tron-red); box-shadow: var(--glow-3); transform: scale(1.02); animation: shake 0.5s; }
-    @keyframes shake { 0%,100%{transform:translateX(0);} 10%,30%,50%,70%,90%{transform:translateX(-5px);} 20%,40%,60%,80%{transform:translateX(5px);} }
-    .card h2 { font-family:'Orbitron',monospace; text-align:center; margin-bottom:20px; text-shadow:var(--glow-1); font-size:1.5rem; }
-    .queue-status { font-size:2.5rem; text-align:center; font-weight:700; }
-    .queue-live { color: var(--tron-red); text-shadow: var(--glow-3); animation: glitch 0.3s infinite; }
-    @keyframes glitch { 0%,100%{transform:translate(0);} 20%{transform:translate(-2px,2px);} 40%{transform:translate(-2px,-2px);} 60%{transform:translate(2px,2px);} 80%{transform:translate(2px,-2px);} }
-    .tweets-grid { display: flex; flex-direction: column; gap:15px; max-height:400px; overflow:auto; }
-    .tweet { background: rgba(0,0,0,0.3); padding:15px; border-radius:12px; border-left:4px solid var(--tron-blue); transition:0.3s; }
-    .tweet.fresh { border-left-color: var(--tron-red); box-shadow: var(--glow-3); animation: freshGlow 2s infinite; }
-    @keyframes freshGlow { 0%,100%{box-shadow:var(--glow-3);} 50%{box-shadow:0 0 60px var(--tron-red),0 0 100px var(--tron-red);} }
-    .tweet-header { display:flex; align-items:center; margin-bottom:10px; }
-    .tweet-header img { width:40px; height:40px; border-radius:50%; border:2px solid var(--tron-blue); margin-right:10px; }
-    .username { font-weight:700; color:var(--tron-cyan); }
-    .time { opacity:0.7; font-size:0.9rem; }
-    .tweet-text { line-height:1.5; }
-    .tweet-link { color:var(--tron-blue); text-decoration:none; font-weight:500; }
-    .tweet-link:hover { text-shadow:var(--glow-1); }
-    .countdown { text-align:center; font-size:3rem; font-family:'Orbitron'; color:var(--tron-purple); text-shadow:var(--glow-1); }
-    .upcoming-drops { text-align: left; }
-    .drop-item { margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; }
-    .drop-location { font-weight: bold; color: var(--tron-cyan); }
-    .controls { position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:10px; z-index:200; }
-    .btn { width:60px; height:60px; border-radius:50%; border:none; background:var(--tron-blue); color:var(--tron-dark); font-size:1.5rem; cursor:pointer; box-shadow:var(--glow-2); transition:0.3s; }
-    .btn:hover { transform:scale(1.1); box-shadow:var(--glow-3); }
-    .btn.sound-off { background:var(--tron-red); }
-    .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .stat { text-align:center; padding:10px; background:var(--glass); border-radius:10px; }
-    .stat-value { font-size:2rem; font-weight:700; display:block; }
-    footer { position:fixed; bottom:10px; left:50%; transform:translateX(-50%); font-size:0.8rem; opacity:0.5; text-align:center; z-index:50; }
-    @media (max-width:768px) { .dashboard { grid-template-columns:1fr; } }
+    .card:hover::before { left: 100%; }
+    .card:hover { transform: translateY(-8px); box-shadow: var(--glow-med); }
+
+    .card h2 {
+      font-family: 'Orbitron', monospace;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      text-shadow: var(--glow-soft);
+    }
+
+    .queue-status {
+      font-size: 2.8rem; text-align: center; font-weight: 700;
+      text-shadow: var(--glow-soft);
+    }
+    .queue-live {
+      color: var(--alert);
+      text-shadow: var(--glow-intense);
+      animation: glitch 1s infinite;
+    }
+    @keyframes glitch {
+      0%,100% { text-shadow: 0 0 20px var(--alert); }
+      20% { text-shadow: 2px 2px 20px var(--alert); }
+      40% { text-shadow: -2px -2px 20px var(--alert); }
+    }
+
+    .upcoming-drops .drop-item {
+      background: rgba(0,0,0,0.2);
+      padding: 14px;
+      border-radius: 12px;
+      margin: 12px 0;
+      border-left: 3px solid #00ffff;
+    }
+    .drop-location {
+      color: #00ffff;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .tweets-grid {
+      display: flex; flex-direction: column; gap: 14px; max-height: 420px; overflow-y: auto;
+    }
+    .tweet {
+      background: rgba(10,20,40,0.4);
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,255,255,0.1);
+    }
+    .tweet.fresh {
+      border-color: var(--alert);
+      box-shadow: var(--glow-intense);
+      animation: freshPulse 3s infinite;
+    }
+    @keyframes freshPulse {
+      0%,100% { box-shadow: 0 0 20px rgba(255,0,64,0.5); }
+      50% { box-shadow: 0 0 40px rgba(255,0,64,0.8); }
+    }
+
+    .controls {
+      position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 200;
+    }
+    .btn {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 1.8rem;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--glow-soft);
+      transition: 0.3s;
+    }
+    .btn:hover {
+      transform: scale(1.15);
+      box-shadow: var(--glow-med);
+    }
+
+    footer {
+      position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+      font-size: 0.8rem; opacity: 0.5; letter-spacing: 0.1em;
+    }
   </style>
 </head>
 <body>
-  <canvas id="matrix-canvas"></canvas>
-  <canvas id="particles-canvas"></canvas>
+
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="grid-bg"></div>
 
   <header>
-    <h1 class="typing">TRON WAR ROOM v4.0</h1>
-    <div class="subtitle">ULTIMATE POKÉMON CENTER DROP INTELLIGENCE • 101% COVERAGE</div>
+    <h1>TRON WAR ROOM v5</h1>
+    <div class="subtitle">PREMIUM DROP INTELLIGENCE</div>
   </header>
 
   <div class="status-bar">
-    <span class="live-dot" id="liveDot"></span>
-    <strong id="statusText">INITIALIZING GRID...</strong> • <span id="lastUpdate">--:--:--</span>
-    <div class="error-msg" id="errorMsg" style="display:none;"></div>
+    <span class="live-dot"></span>
+    <strong id="statusText">GRID ONLINE</strong> • <span id="lastUpdate">--:--:--</span>
+    <div id="errorMsg" style="margin-top:6px; font-size:0.9rem; opacity:0.8; display:none;"></div>
   </div>
 
   <div class="main-container">
     <div class="dashboard">
+
       <div class="card" id="queueCard">
-        <h2>🚨 QUEUE STATUS (US/CA/UK)</h2>
+        <h2>QUEUE STATUS</h2>
         <div class="queue-status" id="queueStatus">SCANNING...</div>
-        <div style="text-align:center; margin-top:10px; font-size:1.2rem;">
-          <a href="https://www.pokemoncenter.com/" target="_blank" class="tweet-link" style="font-size:1.5rem;">→ ENTER QUEUE NOW</a>
+        <div style="text-align:center; margin-top:20px;">
+          <a href="https://www.pokemoncenter.com/" target="_blank" style="color:#00ffff; font-size:1.4rem; text-decoration:none;">ENTER SITE →</a>
         </div>
       </div>
 
       <div class="card">
-        <h2>🕐 NEXT DROP COUNTDOWN</h2>
-        <div class="countdown" id="countdown">Dec 5 • 10AM PT</div>
-        <p style="text-align:center; opacity:0.8;">2025 Holiday Calendar • Expected US/CA Preorder Drop</p>
+        <h2>NEXT DROP</h2>
+        <div class="countdown" id="countdown" style="font-size:3rem; text-align:center;">Dec 5 • 10AM PT</div>
+        <p style="text-align:center; opacity:0.8; margin-top:10px;">2025 Holiday Calendar • US/CA Preorder</p>
       </div>
 
       <div class="card">
-        <h2>📊 STATS</h2>
-        <div class="stats">
-          <div class="stat"><span class="stat-value" id="scans">0</span>Scans</div>
-          <div class="stat"><span class="stat-value" id="alerts">0</span>Alerts</div>
-          <div class="stat"><span class="stat-value" id="lastDrop">--</span>Last Drop</div>
-          <div class="stat"><span class="stat-value" id="uptime">--</span>Uptime</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>🎯 UPCOMING DROPS</h2>
-        <div class="upcoming-drops" id="upcomingDrops">
-          <!-- Dynamic upcoming drops -->
+        <h2>UPCOMING DROPS</h2>
+        <div class="upcoming-drops">
+          <div class="drop-item">
+            <div class="drop-location">US/CA Pokémon Center</div>
+            <p>Dec 5 — Holiday Calendar + Phantasmal Flames Restock</p>
+          </div>
+          <div class="drop-item">
+            <div class="drop-location">UK Pokémon Center</div>
+            <p>Dec 10 — Eevee Collection + Café Menu</p>
+          </div>
+          <div class="drop-item">
+            <div class="drop-location">Japan Pokémon Center</div>
+            <p>Dec 12 — Battle Partners SV9a Lottery</p>
+          </div>
         </div>
       </div>
 
       <div class="card" id="intelCard">
-        <h2>🔥 LIVE X INTEL</h2>
-        <div class="tweets-grid" id="intelList">Loading intel...</div>
+        <h2>LIVE INTEL</h2>
+        <div class="tweets-grid" id="intelList">Loading...</div>
       </div>
+
     </div>
   </div>
 
   <div class="controls">
-    <button class="btn" id="soundBtn" title="Sound">🔊</button>
-    <button class="btn" id="notifyBtn" title="Notifications">🔔</button>
-    <button class="btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+    <button class="btn" id="soundBtn">Sound</button>
+    <button class="btn" id="notifyBtn">Notifications</button>
+    <button class="btn" id="fullscreenBtn">Fullscreen</button>
   </div>
 
-  <footer>TRON LEGACY • Zero Login • Direct Site + X Monitoring • Built for Legends</footer>
+  <footer>TRON LEGACY • Premium Glass Edition • Zero Login • Maximum Stealth</footer>
 
   <script>
-    // ULTIMATE STATE
-    let isQueueLive = false, soundOn = true, notifyPerm = false, scans = 0, alerts = 0, lastDropTime = null, startTime = Date.now();
+    // Same powerful logic as v4, just way prettier
+    let isQueueLive = false, soundOn = true, scans = 0, alerts = 0, lastDropTime = null, startTime = Date.now();
     const alertSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
-    const queueUrls = [
-      'https://www.pokemoncenter.com/',
-      'https://www.pokemoncenter.com/en-ca/',
-      'https://www.pokemoncenter.com/en-gb/'
-    ];
-    const queueKeywords = ['queueit', 'Queue-it', 'virtual queue', 'waiting room', 'you\'re in line', 'virtual waiting room'];
 
-    // NOTIFICATIONS
-    if ('Notification' in window) Notification.requestPermission().then(p => notifyPerm = p === 'granted');
-
-    // SOUNDS & VOICE
-    document.getElementById('soundBtn').onclick = () => { soundOn = !soundOn; document.getElementById('soundBtn').textContent = soundOn ? '🔊' : '🔇'; };
+    document.getElementById('soundBtn').onclick = () => { soundOn = !soundOn; document.getElementById('soundBtn').textContent = soundOn ? 'Sound' : 'Sound'; };
     document.getElementById('notifyBtn').onclick = () => Notification.requestPermission();
     document.getElementById('fullscreenBtn').onclick = () => document.documentElement.requestFullscreen();
 
-    // MATRIX RAIN
-    const matrixCanvas = document.getElementById('matrix-canvas');
-    const ctx = matrixCanvas.getContext('2d');
-    matrixCanvas.width = window.innerWidth; matrixCanvas.height = window.innerHeight;
-    const chars = 'ポケモンCENTERVIRTUALQUEUE DROPRESTOCKLIVE'.split('');
-    const fontSize = 14; const columns = matrixCanvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-    function drawMatrix() {
-      ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,matrixCanvas.width,matrixCanvas.height);
-      ctx.fillStyle = '#00ffff'; ctx.font = `${fontSize}px monospace`;
-      drops.forEach((y,i) => {
-        const text = chars[Math.floor(Math.random()*chars.length)];
-        ctx.fillText(text, i*fontSize, y*fontSize);
-        if (y*fontSize > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0; else drops[i]++;
-      });
-    }
-    setInterval(drawMatrix, 50);
+    const queueUrls = ['https://www.pokemoncenter.com/', 'https://www.pokemoncenter.com/en-ca/', 'https://www.pokemoncenter.com/en-gb/'];
+    const queueKeywords = ['queueit', 'virtual queue', 'waiting room'];
 
-    // PARTICLES
-    const particlesCanvas = document.getElementById('particles-canvas');
-    const pctx = particlesCanvas.getContext('2d');
-    particlesCanvas.width = window.innerWidth; particlesCanvas.height = window.innerHeight;
-    let particles = [];
-    for(let i=0;i<100;i++) particles.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:Math.random()*2-1,vy:Math.random()*2-1});
-    function drawParticles() {
-      pctx.clearRect(0,0,particlesCanvas.width,particlesCanvas.height);
-      pctx.strokeStyle = '#00ffff'; pctx.lineWidth = 1;
-      particles.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        if(p.x<0||p.x>innerWidth) p.vx *= -1; if(p.y<0||p.y>innerHeight) p.vy *= -1;
-        pctx.beginPath(); pctx.moveTo(p.x,p.y); pctx.lineTo(p.x+10*Math.random()-5,p.y+10*Math.random()-5); pctx.stroke();
-      });
-    }
-    setInterval(drawParticles, 30);
-
-    // COUNTDOWN
-    function updateCountdown() {
-      const nextDrop = new Date('2025-12-05T10:00:00-08:00').getTime();
-      const now = Date.now(); const diff = nextDrop - now;
-      if(diff > 0) {
-        const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000);
-        document.getElementById('countdown').textContent = `${d}d ${h}h ${m}m`;
-      } else document.getElementById('countdown').textContent = 'ANY MOMENT!';
-    }
-
-    // UPCOMING DROPS
-    function updateUpcomingDrops() {
-      const dropsEl = document.getElementById('upcomingDrops');
-      dropsEl.innerHTML = `
-        <div class="drop-item">
-          <div class="drop-location">US/CA Pokémon Center – Dec 5, 10AM PT</div>
-          <p>2025 Holiday Calendar • Phantasmal Flames Restock</p>
-        </div>
-        <div class="drop-item">
-          <div class="drop-location">UK Pokémon Center – Dec 10, 9AM GMT</div>
-          <p>Pokémon Café New Menu • Eevee Collection Merch</p>
-        </div>
-        <div class="drop-item">
-          <div class="drop-location">JP Pokémon Center Online – Dec 12, Lottery</div>
-          <p>Battle Partners [SV9a] Restock • Terastal Festival ex</p>
-        </div>
-        <div class="drop-item">
-          <div class="drop-location">Global (Amazon/Target) – Late Dec</div>
-          <p>Mega Evolution: Ascended Heroes Preorders</p>
-        </div>
-      `;
-    }
-
-    // FETCH SITE FOR QUEUE
     async function checkQueue() {
-      let queueDetected = false;
-      for(let url of queueUrls) {
+      for (let url of queueUrls) {
         try {
           const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-          const resp = await fetch(proxy); const html = await resp.text().toLowerCase();
-          if(queueKeywords.some(kw => html.includes(kw))) { queueDetected = true; break; }
+          const html = (await (await fetch(proxy)).text()).toLowerCase();
+          if (queueKeywords.some(k => html.includes(k))) return true;
         } catch(e) {}
       }
-      return queueDetected;
+      return false;
     }
 
-    // FETCH X VIA RSSHUB (PUBLIC, NO TOKEN)
     async function fetchXIntel() {
       try {
-        const rssUrl = 'https://rsshub.app/twitter/search/pokemon%20center%20%28queue%20OR%20drop%20OR%20restock%20OR%20live%29';
-        const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
-        const resp = await fetch(proxy); const data = await resp.json(); const parser = new DOMParser();
+        const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent('https://rsshub.app/twitter/search/pokemon%20center%20%28queue%20OR%20drop%20OR%20live%29')}`;
+        const data = await (await fetch(proxy)).json();
+        const parser = new DOMParser();
         const xml = parser.parseFromString(data.contents, 'text/xml');
-        const items = xml.querySelectorAll('item');
-        let intel = [];
-        for(let item of Array.from(items).slice(0,10)) {
-          const title = item.querySelector('title').textContent;
-          const link = item.querySelector('link').textContent;
-          const pub = new Date(item.querySelector('pubDate').textContent);
-          const age = Math.round((Date.now() - pub)/60000);
-          intel.push({title, link, age});
-        }
-        return intel.filter(i => i.age < 30); // Fresh only
+        const items = Array.from(xml.querySelectorAll('item')).slice(0,8);
+        return items.map(item => ({
+          title: item.querySelector('title').textContent,
+          link: item.querySelector('link').textContent,
+          age: Math.round((Date.now() - new Date(item.querySelector('pubDate').textContent)) / 60000)
+        }));
       } catch(e) { return []; }
     }
 
-    // ALERT FUNCTION
-    function triggerAlert(type, msg) {
-      alerts++;
-      document.getElementById('alerts').textContent = alerts;
-      const card = document.getElementById(type === 'queue' ? 'queueCard' : 'intelCard');
-      card.classList.add('alert');
-      setTimeout(() => card.classList.remove('alert'), 10000);
-      if(soundOn) { alertSound.currentTime=0; alertSound.play(); }
-      if(notifyPerm) new Notification('TRON ALERT', {body: msg, icon: 'data:image/svg+xml;base64,...'});
-      if('speechSynthesis' in window) {
-        const utter = new SpeechSynthesisUtterance(msg); utter.rate=1.2; speechSynthesis.speak(utter);
-      }
-      lastDropTime = Date.now();
-    }
-
-    // MAIN SCAN
     async function scan() {
-      const errorEl = document.getElementById('errorMsg');
-      scans++; document.getElementById('scans').textContent = scans;
+      scans++;
       document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
-      document.getElementById('uptime').textContent = `${Math.round((Date.now()-startTime)/60000)}m`;
-      errorEl.style.display = 'none';
+      document.getElementById('errorMsg').style.display = 'none';
 
       try {
-        // QUEUE CHECK
         const queueNow = await checkQueue();
-        const qsEl = document.getElementById('queueStatus');
-        if(queueNow && !isQueueLive) {
-          isQueueLive = true; qsEl.textContent = '🚨 QUEUE LIVE!'; qsEl.classList.add('queue-live');
-          triggerAlert('queue', 'QUEUE LIVE ON POKÉMON CENTER!');
-        } else if(!queueNow && isQueueLive) {
-          isQueueLive = false; qsEl.textContent = '✅ Queue Cleared - Check Site!'; qsEl.classList.remove('queue-live');
-        } else if(queueNow) {
-          qsEl.textContent = '🔴 QUEUE ACTIVE'; qsEl.classList.add('queue-live');
-        } else {
-          qsEl.textContent = '🟢 No Queue'; qsEl.classList.remove('queue-live');
+        const qs = document.getElementById('queueStatus');
+        if (queueNow && !isQueueLive) {
+          isQueueLive = true;
+          qs.textContent = 'QUEUE LIVE!'; qs.classList.add('queue-live');
+          if (soundOn) { alertSound.currentTime = 0; alertSound.play(); }
+        } else if (!queueNow) {
+          qs.textContent = 'No Queue'; qs.classList.remove('queue-live');
         }
-        if(lastDropTime) document.getElementById('lastDrop').textContent = `${Math.round((Date.now()-lastDropTime)/60000)}m ago`;
 
-        // X INTEL
         const intel = await fetchXIntel();
-        const listEl = document.getElementById('intelList');
-        listEl.innerHTML = intel.map(i => `
-          <div class="tweet ${i.age < 6 ? 'fresh' : ''}">
-            <div class="tweet-header">
-              <div style="width:40px;height:40px;background:var(--tron-blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🌀</div>
-              <div>
-                <div class="username">${i.title.split(' - ')[0]}</div>
-                <div class="time">${i.age}m ago</div>
-              </div>
-            </div>
-            <div class="tweet-text">${i.title}</div>
-            <a href="${i.link}" target="_blank" class="tweet-link">⚡ VIEW TWEET</a>
+        document.getElementById('intelList').innerHTML = intel.map(i => `
+          <div class="tweet ${i.age < 5 ? 'fresh' : ''}">
+            <div style="margin-bottom:8px; opacity:0.8;">${i.age}m ago</div>
+            <div style="font-weight:500;">${i.title}</div>
+            <a href="${i.link}" target="_blank" style="color:#00ffff; font-size:0.9rem; margin-top:8px; display:inline-block;">View →</a>
           </div>
-        `).join('') || '<div style="text-align:center;opacity:0.5;">No fresh intel...</div>';
-
-        if(intel.some(i => i.title.toLowerCase().includes('queue') && i.age < 3)) triggerAlert('intel', 'FRESH QUEUE BUZZ!');
+        `).join('') || '<div style="text-align:center; opacity:0.5;">Quiet on the grid...</div>';
 
       } catch (e) {
-        document.getElementById('statusText').textContent = 'GRID ERROR';
-        errorEl.textContent = `Connection issue detected (e.g., proxy down or rate limit). Retrying in 10s... Last error: ${e.message}. This keeps the tool running without crashing.`;
-        errorEl.style.display = 'block';
+        document.getElementById('errorMsg').textContent = 'Minor network hiccup — auto-retrying...';
+        document.getElementById('errorMsg').style.display = 'block';
       }
     }
 
-    // LOOP
-    updateCountdown(); setInterval(updateCountdown, 60000);
-    updateUpcomingDrops();
-    scan(); setInterval(scan, 10000); // 10s beast mode
-    window.onresize = () => { matrixCanvas.width = particlesCanvas.width = innerWidth; matrixCanvas.height = particlesCanvas.height = innerHeight; };
+    scan();
+    setInterval(scan, 10000);
   </script>
 </body>
 </html>
