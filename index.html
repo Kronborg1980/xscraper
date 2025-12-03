@@ -3,18 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POKÉMON COMMAND CENTER // GLASS EDITION</title>
+<title>POKÉMON COMMAND CENTER // LIVE</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0a0e17;
-    --glass:rgba(15,30,80,0.45);
-    --glass2:rgba(20,40,100,0.65);
-    --border:rgba(0,255,255,0.5);
-    --cyan:#00ffff;
-    --pink:#ff00cc;
-    --gold:#ffcc00;
-    --text:#e0ffff;
+    --bg:#0a0e17;--glass:rgba(15,30,80,0.45);--glass2:rgba(20,40,100,0.65);
+    --border:rgba(0,255,255,0.5);--cyan:#00ffff;--pink:#ff00cc;--text:#e0ffff;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{
@@ -22,7 +16,6 @@
     min-height:100vh;display:flex;flex-direction:column;align-items:center;
     padding:30px 15px;overflow:hidden;position:relative;
   }
-  /* Floating LED particles */
   body::before{
     content:"";position:absolute;inset:0;
     background:repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg,var(--cyan)15 1deg,transparent 2deg);
@@ -37,9 +30,9 @@
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;
     text-shadow:0 0 80px rgba(0,255,255,0.6);animation:neon 4s infinite alternate;
   }
-  @keyframes neon{to{text-shadow:0 0 120px rgba(0,255,255,0.9),0 0 180px rgba(0,255,255,0.6);}}
+  @keyframes neon{to{text-shadow:0 0 120px rgba(0,255,255,0.9)}}
 
-  /* QUEUE ORB - CENTERED GLASS MASTERPIECE */
+  /* GORGEOUS QUEUE ORB */
   #queue{
     width:clamp(280px,60vw,420px);height:clamp(280px,60vw,420px);
     background:var(--glass2);border:4px solid var(--border);border-radius:50%;
@@ -57,15 +50,16 @@
     animation:pulse 2s infinite;
   }
   @keyframes pulse{0%,100%{box-shadow:0 0 160px rgba(255,0,204,0.7)}50%{box-shadow:0 0 220px rgba(255,0,204,1)}}
+  @keyframes spin{to{--angle:360deg}}
   #queueIcon{font-size:clamp(4rem,15vw,7rem);}
   #queueLabel{font-family:'Orbitron',sans-serif;font-size:clamp(1.6rem,6vw,2.8rem);font-weight:700;letter-spacing:0.1em;}
 
-  /* DROPS CARD - GLASS PERFECTION */
+  /* DROPS CARD */
   .drops-card{
     width:100%;max-width:1000px;margin-top:60px;background:var(--glass);
     border:3px solid var(--border);border-radius:32px;padding:40px 30px;
-    backdrop-filter:blur(40px);box-shadow:0 30px 80px rgba(0,0,0,0.7),
-      inset 0 0 100px rgba(0,255,255,0.1);position:relative;overflow:hidden;
+    backdrop-filter:blur(40px);box-shadow:0 30px 80px rgba(0,0,0,0.7),inset 0 0 100px rgba(0,255,255,0.1);
+    position:relative;overflow:hidden;
   }
   .drops-card::before{
     content:"";position:absolute;top:0;left:-100%;width:100%;height:4px;
@@ -79,22 +73,20 @@
   }
   .drop{
     background:rgba(0,0,0,0.35);border-radius:20px;padding:20px;margin:16px 0;
-    border-left:6px solid var(--cyan);transition:0.4s;
+    border-left:6px solid var(--cyan);transition:0.4s;font-size:clamp(0.95rem,3vw,1.1rem);
   }
   .drop:hover{border-left-color:var(--pink);transform:translateX(10px);box-shadow:0 0 40px rgba(255,0,204,0.2);}
   .drop strong{color:var(--cyan);}
-  .site{font-size:0.95rem;margin-top:8px;opacity:0.85;}
+  .site{font-size:0.9rem;margin-top:8px;opacity:0.85;}
 
-  /* FLOATING NEON BUTTONS */
   .controls{
     position:fixed;bottom:30px;right:30px;display:flex;flex-direction:column;gap:18px;z-index:999;
   }
   .btn{
     width:70px;height:70px;border-radius:50%;background:var(--glass2);
     border:4px solid var(--border);color:var(--text);font-size:2rem;cursor:pointer;
-    backdrop-filter:blur(30px);box-shadow:0 15px 40px rgba(0,0,0,0.8),
-      0 0 50px rgba(0,255,255,0.4);transition:all 0.4s;
-    display:flex;align-items:center;justify-content:center;
+    backdrop-filter:blur(30px);box-shadow:0 15px 40px rgba(0,0,0,0.8),0 0 50px rgba(0,255,255,0.4);
+    transition:all 0.4s;display:flex;align-items:center;justify-content:center;
   }
   .btn:hover{transform:scale(1.2) translateY(-10px);box-shadow:0 25px 60px rgba(0,255,255,0.6);}
   .btn.site{background:linear-gradient(135deg,var(--cyan),var(--pink));color:#000;font-weight:bold;}
@@ -106,24 +98,21 @@
   <h1>COMMAND CENTER</h1>
 </header>
 
-<!-- GORGEOUS QUEUE ORB -->
+<!-- LIVE QUEUE ORB -->
 <div id="queue">
   <div id="queueIcon">Green Circle</div>
   <div id="queueLabel">NO QUEUE</div>
 </div>
 
-<!-- ALL DROPS - GLASS BEAUTY -->
+<!-- ALL DROPS (AUTO-UPDATING) -->
 <div class="drops-card">
   <h2>ALL CONFIRMED DROPS</h2>
-  <div class="drop"><strong>Dec 5 • 10:00 AM PT (100%)</strong><br>Mega Kangaskhan ex Box • Mega Venusaur Premium Collection • Holiday Calendar 2025<br><span class="site">→ pokemoncenter.com (US/CA)</span></div>
-  <div class="drop"><strong>Dec 10 • 9:00 AM GMT (90%)</strong><br>Eevee Collection Merch<br><span class="site">→ pokemoncenter.com/en-gb (UK)</span></div>
-  <div class="drop"><strong>Dec 12 (75%)</strong><br>Battle Partners SV9a Restock<br><span class="site">→ pokemoncenter-online.com (JP)</span></div>
-  <div class="drop"><strong>Late Dec (80%)</strong><br>Mega Evolution: Ascended Heroes Preorders<br><span class="site">→ pokemoncenter.com (US/CA)</span></div>
-  <div class="drop"><strong>Jan 17, 2026 (80%)</strong><br>Prismatic Evolutions Restock<br><span class="site">→ pokemoncenter.com (US/CA)</span></div>
-  <div class="drop"><strong>Feb 20, 2026 (100%)</strong><br>Ascended Heroes Pokémon Center ETB<br><span class="site">→ pokemoncenter.com (US/CA)</span></div>
+  <div id="dropList">
+    Loading latest drops from official sources...
+  </div>
 </div>
 
-<!-- NEON FLOATING BUTTONS -->
+<!-- NEON BUTTONS -->
 <div class="controls">
   <button class="btn site" onclick="window.open('https://www.pokemoncenter.com','_blank')">GO</button>
   <button class="btn" onclick="location.reload()">Refresh</button>
@@ -140,6 +129,7 @@
     document.getElementById('alarmBtn').textContent = alarmOn ? 'Bell' : 'Bell Off';
   };
 
+  // LIVE QUEUE DETECTION (TRIPLE-CHECKED)
   async function checkQueue() {
     const urls = ['https://www.pokemoncenter.com/','https://www.pokemoncenter.com/en-ca/','https://www.pokemoncenter.com/en-gb/'];
     let hits = 0;
@@ -150,6 +140,36 @@
       } catch(e) {}
     }
     return hits >= 2;
+  }
+
+  // AUTO-UPDATING DROPS FROM REAL SOURCES
+  async function updateDrops() {
+    try {
+      const resp = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent('https://www.pokebeach.com/feed'));
+      const data = await resp.json();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(data.contents,'text/xml');
+      const items = Array.from(xml.querySelectorAll('item')).slice(0,10);
+
+      const drops = items
+        .filter(i => {
+          const t = (i.querySelector('title')?.textContent || '').toLowerCase();
+          const d = (i.querySelector('description')?.textContent || '').toLowerCase();
+          return (t.includes('preorder') || t.includes('release') || t.includes('drop') || d.includes('pokemon center'));
+        })
+        .map(i => {
+          const title = i.querySelector('title').textContent;
+          const link = i.querySelector('link').textContent;
+          return `<div class="drop"><strong>${title}</strong><br><span class="site">→ <a href="${link}" target="_blank" style="color:#00ffff;">Source</a></span></div>`;
+        }).join('');
+
+      document.getElementById('dropList').innerHTML = drops || '<div class="drop">No new drops announced yet — Dec 5 still active</div>';
+    } catch(e) {
+      document.getElementById('dropList').innerHTML = `
+        <div class="drop"><strong>Dec 5 • 10AM PT</strong><br>Holiday Calendar • Mega Venusaur PC • Kangaskhan ex Box<br><span class="site">→ pokemoncenter.com</span></div>
+        <div class="drop"><strong>Dec 10 • 9AM GMT</strong><br>Eevee Collection (UK)<br><span class="site">→ pokemoncenter.com/en-gb</span></div>
+      `;
+    }
   }
 
   async function scan() {
@@ -171,6 +191,7 @@
       label.textContent = 'NO QUEUE';
       q.classList.remove('live');
     }
+    updateDrops();
   }
 
   scan();
