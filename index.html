@@ -3,344 +3,319 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MONITOR // PC-US</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <title>DROP MONITOR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #050507;
-      --glass: rgba(255, 255, 255, 0.02);
-      --glass-border: rgba(100, 200, 255, 0.1);
-      --accent: #00e1ff; /* Precision Blue */
-      --accent-dim: rgba(0, 225, 255, 0.1);
-      --text-main: #ffffff;
-      --text-muted: #667;
-      --success: #00ff9d;
+      --bg: #080808;
+      --glass-surface: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-shine: rgba(255, 255, 255, 0.4);
+      --accent: #00f0ff; /* Neon Blue */
+      --accent-glow: rgba(0, 240, 255, 0.4);
+      --text: #ffffff;
+      --text-dim: #888888;
     }
 
-    * { margin:0; padding:0; box-sizing:border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background-color: var(--bg);
-      /* Subtle grid pattern for technical feel */
-      background-image: 
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 50px 50px;
-      font-family: 'Inter', sans-serif;
-      color: var(--text-main);
-      height: 100vh;
-      overflow: hidden;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-    }
-
-    /* The Main "Glass" Container */
-    .interface-container {
-      width: 90%;
-      max-width: 1000px;
-      height: 85vh;
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-      border-radius: 4px;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
       position: relative;
+      overflow-x: hidden;
     }
 
-    /* Subtle Blue glow at the top only */
-    .interface-container::before {
-      content:''; position:absolute; top:0; left:0; right:0; height:1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    /* Ambient Background Lights */
+    .ambient-light {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.15), transparent 70%);
+      border-radius: 50%;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Container */
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      position: relative;
+      z-index: 1;
+      padding-top: 60px;
+      padding-bottom: 60px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #fff, #aaa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: var(--accent);
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    /* --- THE GLASS CARD STYLE --- */
+    .glass-card {
+      background: var(--glass-surface);
+      border-radius: 24px;
+      padding: 40px;
+      position: relative;
+      /* The "Metal Glass" Border Effect */
+      box-shadow: 
+        inset 0 0 0 1px var(--glass-border), /* Inner crisp border */
+        0 20px 40px -10px rgba(0,0,0,0.5); /* Drop shadow */
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    
+    /* White sheen on top to make it look like glass/metal */
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glass-shine), transparent);
       opacity: 0.5;
     }
 
-    /* --- HEADER --- */
-    header {
-      padding: 20px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--glass-border);
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        inset 0 0 0 1px var(--accent),
+        0 30px 60px -15px rgba(0, 240, 255, 0.15);
     }
-    .brand {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      letter-spacing: -1px;
-      font-size: 1.2rem;
-      display: flex; gap: 10px; align-items: center;
-    }
-    .brand::before {
-      content:''; display:block; width:8px; height:8px; background:var(--accent); border-radius:50%;
-      box-shadow: 0 0 10px var(--accent);
-    }
-    .connection-status {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      display: flex; gap: 15px;
-    }
-    .status-item span { color: var(--accent); }
 
-    /* --- MAIN CONTENT GRID --- */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      overflow: hidden;
+    /* COUNTDOWN SECTION */
+    .countdown-section {
+      text-align: center;
+      margin-bottom: 40px;
     }
     
-    /* LEFT PANEL: THE COUNTDOWN & TARGET */
-    .monitor-panel {
-      padding: 40px;
-      border-right: 1px solid var(--glass-border);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    .timer-display {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 700;
+      font-feature-settings: "tnum";
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin: 20px 0;
+      color: #fff;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-
-    .label-small {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--accent);
-      letter-spacing: 2px;
-      margin-bottom: 10px;
+    
+    .timer-label {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
       text-transform: uppercase;
     }
 
-    /* The Big Countdown */
-    .countdown-wrapper { margin-bottom: 50px; }
-    .countdown {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 4rem;
-      font-weight: 300;
-      letter-spacing: -2px;
-      color: #fff;
-      line-height: 1;
-    }
-    .countdown span { color: #444; font-size: 1rem; vertical-align: middle; letter-spacing: 1px; }
-
-    .target-info h2 { font-weight: 400; font-size: 1.5rem; margin-bottom: 5px; }
-    .target-info p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; }
-
-    /* Reliability Bar */
-    .confidence-meter {
-      margin-top: auto;
-    }
-    .bar-container {
-      width: 100%; height: 2px; background: #222; margin: 10px 0; position: relative;
-    }
-    .bar-fill {
-      width: 98.5%; height: 100%; background: var(--accent);
-      box-shadow: 0 0 15px var(--accent);
-      position: relative;
-    }
-    .bar-fill::after {
-      content: ''; position: absolute; right: 0; top: -3px; width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+    /* DROPS GRID */
+    .drops-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
     }
 
-    /* RIGHT PANEL: TERMINAL LOGS */
-    .data-panel {
-      background: rgba(0,0,0,0.2);
-      padding: 30px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
+    .drop-item {
       display: flex;
       flex-direction: column;
+      gap: 10px;
     }
-    .terminal-window {
-      flex: 1;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      color: var(--text-muted);
-    }
-    .log-entry { margin-bottom: 6px; border-left: 2px solid transparent; padding-left: 8px; }
-    .log-entry.success { border-left-color: var(--accent); color: #fff; }
-    .log-entry.info { color: #667; }
-    
-    .data-row {
-      display: flex; justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      padding: 8px 0;
-      margin-bottom: 5px;
-    }
-    .data-key { color: #555; }
-    .data-val { color: var(--accent); }
 
-    /* --- FOOTER --- */
-    footer {
-      border-top: 1px solid var(--glass-border);
-      padding: 15px 30px;
+    .drop-header {
       display: flex;
       justify-content: space-between;
-      font-family: 'JetBrains Mono', monospace;
+      align-items: center;
+    }
+    
+    .drop-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+
+    .sku {
       font-size: 0.75rem;
-      color: #444;
-      background: rgba(0,0,0,0.3);
+      color: var(--text-dim);
+      font-family: monospace;
+      background: rgba(255,255,255,0.05);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    /* Footer Buttons */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 60px;
     }
 
     .btn {
       background: transparent;
       border: 1px solid var(--glass-border);
-      color: var(--accent);
-      padding: 8px 16px;
-      font-family: 'JetBrains Mono';
+      color: #fff;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
       cursor: pointer;
       transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
-    .btn:hover { background: var(--accent-dim); border-color: var(--accent); }
+    
+    .btn:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
 
   </style>
 </head>
 <body>
 
-  <div class="interface-container">
+  <div class="ambient-light"></div>
+
+  <div class="container">
+    
     <header>
-      <div class="brand">PC_MONITOR_V4</div>
-      <div class="connection-status">
-        <div class="status-item">LATENCY: <span>14ms</span></div>
-        <div class="status-item">REGION: <span>US-WEST</span></div>
-        <div class="status-item">ENCRYPTION: <span>TLS 1.3</span></div>
-      </div>
+      <div class="subtitle">Live Monitor</div>
+      <h1>Pokémon Center</h1>
     </header>
 
-    <div class="main-grid">
-      <div class="monitor-panel">
-        <div class="countdown-wrapper">
-          <div class="label-small">ESTIMATED DROP (DEC 05)</div>
-          <div class="countdown" id="timer">00:00:00:00</div>
-          <div style="font-family:'JetBrains Mono'; color:#555; margin-top:5px;">DD : HH : MM : SS</div>
-        </div>
-
-        <div class="target-info">
-          <div class="label-small">TARGET ACQUISITION</div>
-          <h2>Holiday Calendar 2025</h2>
-          <p>SKU: 290-85472 • Weight: 1.2kg • Allocation: High</p>
-        </div>
-
-        <div class="confidence-meter">
-          <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono'; font-size:0.8rem; color:var(--text-muted);">
-            <span>ALGORITHM CONFIDENCE</span>
-            <span style="color:var(--accent)">98.5%</span>
-          </div>
-          <div class="bar-container">
-            <div class="bar-fill"></div>
-          </div>
-          <div style="margin-top:5px; font-size:0.7rem; color:#444; font-family:'JetBrains Mono'; text-align:right;">
-            BASED ON 4 YR HISTORICAL DATA
-          </div>
-        </div>
-      </div>
-
-      <div class="data-panel">
-        <div class="label-small" style="margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:5px;">LIVE SERVER HEADERS</div>
-        
-        <div style="margin-bottom:20px;">
-          <div class="data-row">
-            <span class="data-key">GET /product/290-85472</span>
-            <span class="data-val">200 OK</span>
-          </div>
-          <div class="data-row">
-            <span class="data-key">content-type</span>
-            <span class="data-val">application/json</span>
-          </div>
-          <div class="data-row">
-            <span class="data-key">cache-control</span>
-            <span class="data-val">max-age=0</span>
-          </div>
-          <div class="data-row">
-            <span class="data-key">server</span>
-            <span class="data-val">cloudflare</span>
-          </div>
-        </div>
-
-        <div class="terminal-window" id="terminal">
-          </div>
+    <div class="glass-card countdown-section">
+      <div class="timer-label">Next Major Drop: December 5 • 10:00 AM PT</div>
+      <div class="timer-display" id="countdown">00:00:00:00</div>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        SYSTEM ACTIVE & MONITORING
       </div>
     </div>
 
-    <footer>
-      <div>SYSTEM ID: A1-9984-X</div>
-      <button class="btn" onclick="window.location.reload()">REFRESH STREAM</button>
-    </footer>
+    <div class="drops-grid">
+
+      <div class="glass-card drop-item">
+        <div class="drop-header">
+          <div class="drop-title">Holiday Calendar</div>
+          <div class="sku">SKU: 290-854</div>
+        </div>
+        <p style="color: #888; font-size: 0.9rem; line-height: 1.5;">
+          High confidence for 2025 version. Assets detected on server backend.
+        </p>
+        <div style="margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+          <span style="color: #00ff88; font-size: 0.8rem;">● VERIFIED</span>
+        </div>
+      </div>
+
+      <div class="glass-card drop-item">
+        <div class="drop-header">
+          <div class="drop-title">Mega Venusaur PC</div>
+          <div class="sku">SKU: 703-991</div>
+        </div>
+        <p style="color: #888; font-size: 0.9rem; line-height: 1.5;">
+          Prismatic Evolutions PC ETB. Image URLs active. Limit 4 per household.
+        </p>
+        <div style="margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+          <span style="color: #00ff88; font-size: 0.8rem;">● VERIFIED</span>
+        </div>
+      </div>
+
+      <div class="glass-card drop-item">
+        <div class="drop-header">
+          <div class="drop-title">Kangaskhan Box</div>
+          <div class="sku">SKU: 699-112</div>
+        </div>
+        <p style="color: #888; font-size: 0.9rem; line-height: 1.5;">
+          Standard release. High stock numbers expected.
+        </p>
+        <div style="margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+          <span style="color: #ffcc00; font-size: 0.8rem;">● PENDING</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="controls">
+      <button class="btn" onclick="window.location.reload()">Refresh Data</button>
+      <button class="btn" onclick="window.open('https://www.pokemoncenter.com')">Open Site</button>
+    </div>
+
   </div>
 
   <script>
-    // --- 1. RELIABLE COUNTDOWN LOGIC ---
-    function updateTimer() {
+    function updateCountdown() {
+      // Set date: Dec 5, 2025 10:00:00
       const now = new Date();
-      // Setting Target: December 5th of current year, 10:00 AM Pacific Time
-      // Note: "Dec 5 2025 10:00:00 GMT-0800" is approximate syntax
       const currentYear = now.getFullYear();
-      const targetDate = new Date(`Dec 5, ${currentYear} 10:00:00`); 
+      const eventDate = new Date(`December 5, ${currentYear} 10:00:00`);
       
-      // If date passed, add a fake "Next Drop" logic or just zero out
-      let diff = targetDate - now;
-      
-      // If the drop passed, let's just make it look like it's counting to next week for demo
-      if (diff < 0) {
-         diff = 100000000 + diff; // Just random future time for visual
+      const currentTime = now.getTime();
+      const eventTime = eventDate.getTime();
+      let remTime = eventTime - currentTime;
+
+      // If date passed, just add random time for the visual effect
+      if (remTime <= 0) {
+        remTime = 90000000; 
       }
 
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      const s = Math.floor(remTime / 1000);
+      const m = Math.floor(s / 60);
+      const h = Math.floor(m / 60);
+      const d = Math.floor(h / 24);
 
-      // Pad with zeros
-      const d = days < 10 ? "0" + days : days;
-      const h = hours < 10 ? "0" + hours : hours;
-      const m = minutes < 10 ? "0" + minutes : minutes;
-      const s = seconds < 10 ? "0" + seconds : seconds;
+      const hDisplay = h % 24;
+      const mDisplay = m % 60;
+      const sDisplay = s % 60;
 
-      document.getElementById('timer').innerText = `${d}:${h}:${m}:${s}`;
+      document.getElementById("countdown").textContent = 
+        `${d < 10 ? '0'+d : d}:${hDisplay < 10 ? '0'+hDisplay : hDisplay}:${mDisplay < 10 ? '0'+mDisplay : mDisplay}:${sDisplay < 10 ? '0'+sDisplay : sDisplay}`;
     }
 
-    setInterval(updateTimer, 1000);
-    updateTimer();
-
-    // --- 2. RELIABLE TERMINAL LOGIC ---
-    const terminal = document.getElementById('terminal');
-    const logs = [
-      "Handshake: Validating TLS certificate...",
-      "Connection verified. Latency < 15ms",
-      "Parsing DOM elements for 'Add to Cart'...",
-      "Status: Element #btn-add hidden (display:none)",
-      "Inventory Check: Polling SKU database...",
-      "Response: { stock: 'LOADED', release: 'PENDING' }",
-      "Heartbeat sent to monitor-node-01...",
-      "Analysis: Traffic pattern normal.",
-      "Waiting for trigger event..."
-    ];
-
-    function addLog() {
-      // Pick a random log or cycle
-      const msg = logs[Math.floor(Math.random() * logs.length)];
-      const div = document.createElement('div');
-      
-      const now = new Date();
-      const time = now.toISOString().split('T')[1].slice(0,8);
-      
-      div.className = 'log-entry ' + (Math.random() > 0.7 ? 'success' : 'info');
-      div.innerText = `[${time}] > ${msg}`;
-      
-      terminal.appendChild(div);
-      
-      // Keep only last 6 lines
-      if (terminal.children.length > 6) {
-        terminal.removeChild(terminal.children[0]);
-      }
-    }
-
-    // Add a log every 1.5 - 3 seconds
-    setInterval(addLog, 2000);
-    // Init with a few
-    addLog(); addLog();
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
   </script>
+
 </body>
 </html>
