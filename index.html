@@ -4,21 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>POKÉMON COMMAND CENTER</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #050505;
-      --glass-bg: rgba(20, 30, 45, 0.4);
+      --glass-bg: rgba(20, 30, 45, 0.6);
       --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-highlight: rgba(255, 255, 255, 0.2);
+      --glass-highlight: rgba(255, 255, 255, 0.15);
       
       --cyan: #00f3ff;
       --magenta: #ff0055;
       --purple: #bc13fe;
       --green: #00ff9d;
+      --yellow: #fcee0a;
       --text: #e0ffff;
       
-      --neon-flow-speed: 3s;
+      --neon-flow-speed: 4s;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -26,8 +27,8 @@
     body {
       background: var(--bg);
       background-image: 
-        radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.15), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.15), transparent 25%);
+        radial-gradient(circle at 10% 20%, rgba(188, 19, 254, 0.1), transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(0, 243, 255, 0.1), transparent 30%);
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -42,9 +43,9 @@
       display: block;
       position: fixed;
       top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
       z-index: 2;
-      background-size: 100% 2px, 3px 100%;
+      background-size: 100% 3px, 4px 100%;
       pointer-events: none;
     }
 
@@ -57,55 +58,38 @@
 
     h1 {
       font-family: 'Orbitron', monospace;
-      font-size: clamp(2.5rem, 8vw, 6rem);
+      font-size: clamp(2.5rem, 8vw, 5rem);
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      background: linear-gradient(180deg, #fff, var(--dim));
+      background: linear-gradient(180deg, #fff, var(--glass-highlight));
       -webkit-background-clip: text;
       color: transparent;
-      text-shadow: 0 0 20px var(--cyan);
-      position: relative;
-    }
-    
-    /* Glitch effect on hover for title */
-    h1::before, h1::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.8;
-      display: none;
+      text-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
     }
 
     /* The Moving LED Border Container */
     .led-border {
       position: relative;
       background: var(--glass-bg);
-      border-radius: 20px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      /* The static border */
+      border-radius: 16px;
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       box-shadow: 
         inset 0 0 0 1px var(--glass-border),
-        0 20px 50px rgba(0,0,0,0.5);
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+        0 20px 50px rgba(0,0,0,0.6);
+      transition: transform 0.3s ease;
     }
 
-    /* The "Running Light" Pseudo-element */
+    /* LED Flow Animation */
     .led-border::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border-radius: 20px;
-      padding: 2px; /* Thickness of the LED border */
-      width: 100%;
-      background: linear-gradient(90deg, transparent 50%, var(--cyan), var(--purple), var(--magenta), transparent 90%);
-      background-size: 300% 300%;
-      -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
+      inset: 0;
+      border-radius: 16px;
+      padding: 1.5px;
+      background: linear-gradient(90deg, transparent 40%, var(--cyan), var(--purple), var(--magenta), transparent 80%);
+      background-size: 250% 250%;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       animation: borderFlow var(--neon-flow-speed) linear infinite;
@@ -118,186 +102,148 @@
       100% { background-position: 0% 50%; }
     }
 
-    .led-border:hover {
-      transform: translateY(-5px);
-      box-shadow: 
-        inset 0 0 0 1px var(--glass-highlight),
-        0 0 30px rgba(0, 243, 255, 0.2);
-    }
-
-    /* Queue Status Pill */
-    .queue-pill {
-      position: fixed;
-      top: 130px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 12px 30px;
-      border-radius: 50px;
-      z-index: 100;
-      width: max-content;
-    }
-    
-    .status-indicator {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 15px var(--green);
-      transition: all 0.3s ease;
-    }
-    
-    .status-indicator.alert {
-      background: var(--magenta);
-      box-shadow: 0 0 20px var(--magenta), 0 0 40px var(--magenta);
-      animation: blink 0.5s infinite alternate;
-    }
-
-    .queue-label {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.2rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: #fff;
-      text-shadow: 0 0 10px rgba(0,255,255,0.5);
-    }
-
-    @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
+    .led-border:hover { transform: translateY(-5px); }
 
     /* Dashboard Layout */
     .dashboard {
       max-width: 1200px;
       width: 100%;
-      margin: 180px auto 100px;
+      margin: 40px auto 100px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 40px;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 30px;
       padding: 0 20px;
       z-index: 5;
     }
 
-    .card-content {
-      padding: 40px;
-      position: relative;
-      z-index: 2;
-    }
+    .card-content { padding: 30px; position: relative; z-index: 2; }
 
     .card h2 {
       font-family: 'Orbitron', monospace;
-      font-size: 1.5rem;
-      margin-bottom: 25px;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
       color: var(--cyan);
       display: flex;
       align-items: center;
       gap: 10px;
       text-transform: uppercase;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 10px;
     }
+    .card h2 svg { width: 22px; height: 22px; }
 
-    .card h2 svg { width: 24px; height: 24px; }
-
-    /* Intel List Styling */
-    .intel-list { display: flex; flex-direction: column; gap: 15px; }
+    /* --- DROP ITEM STYLES --- */
+    .drop-item { margin-bottom: 25px; }
     
-    .intel-item {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 15px;
-      border-radius: 8px;
-      border-left: 3px solid var(--glass-border);
-      font-size: 0.95rem;
-      transition: all 0.3s;
+    .drop-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 6px;
     }
     
-    .intel-item span.time { font-size: 0.75rem; color: #888; font-family: 'Orbitron', monospace; }
-
-    .intel-item.fresh {
-      border-left-color: var(--magenta);
-      background: linear-gradient(90deg, rgba(255, 0, 85, 0.1), transparent);
-      box-shadow: 0 0 15px rgba(255,0,85,0.1);
+    .product-name { font-weight: 600; font-size: 1.1rem; color: #fff; }
+    
+    .confidence-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(0, 255, 157, 0.1);
+      color: var(--green);
+      border: 1px solid var(--green);
     }
+    
+    .confidence-badge.med { color: var(--yellow); border-color: var(--yellow); background: rgba(252, 238, 10, 0.1); }
 
-    /* Floating Action Buttons */
-    .fab-container {
-      position: fixed;
-      bottom: 40px;
-      right: 40px;
+    /* Technical Intel Text */
+    .intel-reason {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      color: #aaa;
+      margin-bottom: 8px;
       display: flex;
-      flex-direction: column;
-      gap: 20px;
-      z-index: 200;
+      gap: 8px;
+    }
+    .intel-reason::before { content: '>'; color: var(--magenta); }
+
+    /* Probability Bar */
+    .prob-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .prob-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      box-shadow: 0 0 10px var(--cyan);
+      width: 0%;
+      animation: loadBar 1.5s ease-out forwards;
     }
 
-    .fab-btn {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: rgba(20, 20, 30, 0.6);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: var(--cyan);
-      cursor: pointer;
-      backdrop-filter: blur(10px);
+    @keyframes loadBar { from { width: 0; } }
+
+    /* Live Intel Feed */
+    .intel-list { display: flex; flex-direction: column; gap: 12px; }
+    
+    .intel-log {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 2px solid var(--glass-border);
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .intel-log.alert { border-left-color: var(--magenta); background: rgba(255, 0, 85, 0.08); }
+    .intel-log span.code { font-family: 'Share Tech Mono', monospace; color: var(--cyan); font-size: 0.8rem; }
+
+    /* Queue Pill */
+    .queue-pill {
+      margin: 0 auto 30px;
+      width: max-content;
+      padding: 10px 30px;
+      border-radius: 50px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      gap: 15px;
     }
-
-    .fab-btn svg { width: 24px; height: 24px; stroke-width: 2; }
-
-    .fab-btn:hover {
-      transform: scale(1.15);
-      background: var(--cyan);
-      color: #000;
-      box-shadow: 0 0 30px var(--cyan);
-      border-color: transparent;
-    }
-
-    .fab-btn.main-action {
-      background: linear-gradient(135deg, var(--magenta), var(--purple));
-      color: white;
-      border: none;
-    }
+    .status-dot { width: 10px; height: 10px; background: var(--green); border-radius: 50%; box-shadow: 0 0 10px var(--green); }
+    .status-dot.live { background: var(--magenta); box-shadow: 0 0 15px var(--magenta); animation: blink 0.5s infinite alternate; }
     
-    .fab-btn.main-action:hover {
-      box-shadow: 0 0 40px var(--magenta);
-    }
+    @keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
 
-    /* Decorative Background Shapes */
-    .bg-shape {
-      position: fixed;
+    /* FABs */
+    .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 100; }
+    .fab-btn {
+      width: 50px; height: 50px;
       border-radius: 50%;
-      filter: blur(80px);
-      z-index: 1;
-      opacity: 0.4;
-      animation: float 20s infinite ease-in-out;
+      background: rgba(20, 20, 30, 0.8);
+      border: 1px solid var(--glass-border);
+      color: var(--text);
+      cursor: pointer;
+      display: flex; justify-content: center; align-items: center;
+      transition: all 0.2s;
+      backdrop-filter: blur(10px);
     }
-    .shape-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--purple); animation-delay: 0s; }
-    .shape-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: var(--cyan); animation-delay: -5s; }
-
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(30px, 50px); }
-    }
+    .fab-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
+    .fab-btn svg { width: 20px; height: 20px; }
 
   </style>
 </head>
 <body>
 
-  <div class="bg-shape shape-1"></div>
-  <div class="bg-shape shape-2"></div>
-
   <header>
-    <h1 data-text="COMMAND CENTER">COMMAND CENTER</h1>
+    <h1>COMMAND CENTER</h1>
   </header>
 
-  <div class="led-border queue-pill" id="queuePill">
-    <div class="status-indicator" id="statusDot"></div>
-    <div class="queue-label" id="queueLabel">SYSTEM NORMAL</div>
+  <div class="led-border queue-pill">
+    <div class="status-dot" id="statusDot"></div>
+    <div style="font-family:'Orbitron'; font-weight:700; letter-spacing:2px; font-size:1.1rem;">
+      <span id="queueLabel">MONITORING</span>
+    </div>
   </div>
 
   <div class="dashboard">
@@ -305,39 +251,63 @@
     <div class="led-border card">
       <div class="card-content">
         <h2>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-          Supply Drop
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+          Probability Matrix (Dec 05)
         </h2>
-        <div style="font-size: 1.1rem; line-height: 1.6; color: #fff;">
-          <strong style="color:var(--cyan); font-size:1.3rem; display:block; margin-bottom:8px;">Dec 05 • 10:00 AM PT</strong>
-          Holiday Calendar 2025<br>
-          Mega Venusaur PC<br>
-          Kangaskhan ex Box
+
+        <div class="drop-item">
+          <div class="drop-header">
+            <span class="product-name">Holiday Calendar 2025</span>
+            <span class="confidence-badge">98% PROBABLE</span>
+          </div>
+          <div class="intel-reason">PATTERN MATCH: 2022-2024 (First Friday/Dec)</div>
+          <div class="intel-reason">Retailer listings spotted in UK backend</div>
+          <div class="prob-bar-bg"><div class="prob-bar-fill" style="width: 98%"></div></div>
         </div>
-        <div style="margin-top:25px; font-size:0.85rem; color:rgba(255,255,255,0.5); border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">
-          PROBABILITY: HIGH
+
+        <div class="drop-item">
+          <div class="drop-header">
+            <span class="product-name">Mega Venusaur PC ETB</span>
+            <span class="confidence-badge">85% PROBABLE</span>
+          </div>
+          <div class="intel-reason">ASSET DECRYPTION: Image URL active on CDN</div>
+          <div class="intel-reason">Matches "Prismatic" Set pre-order window</div>
+          <div class="prob-bar-bg"><div class="prob-bar-fill" style="width: 85%"></div></div>
         </div>
+
+        <div class="drop-item">
+          <div class="drop-header">
+            <span class="product-name">Kangaskhan ex Box</span>
+            <span class="confidence-badge med">60% PROBABLE</span>
+          </div>
+          <div class="intel-reason">STANDARD PROTOCOL: TCG Friday Release</div>
+          <div class="prob-bar-bg"><div class="prob-bar-fill" style="width: 60%; background: linear-gradient(90deg, var(--yellow), var(--magenta));"></div></div>
+        </div>
+
       </div>
     </div>
 
     <div class="led-border card">
       <div class="card-content">
         <h2>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" /></svg>
-          Live Intel
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+          Raw Data Stream
         </h2>
-        <div class="intel-list" id="intelList">
-          <div class="intel-item fresh">
-            <div>Queue detected (US)</div>
-            <span class="time">NOW</span>
+        <div class="intel-list">
+          <div class="intel-log alert">
+            <div><span class="code">SYS_ALERT</span> :: US Queue page active (Hidden)</div>
           </div>
-          <div class="intel-item">
-            <div>Venusaur Image Loaded</div>
-            <span class="time">12m</span>
+          <div class="intel-log">
+            <div><span class="code">NET_LOG</span> :: Traffic spike detected on /tcg</div>
           </div>
-          <div class="intel-item">
-            <div>Site Traffic Spike</div>
-            <span class="time">24m</span>
+          <div class="intel-log">
+            <div><span class="code">BOT_NET</span> :: Scalper ping rate increased by 400%</div>
+          </div>
+          <div class="intel-log">
+            <div><span class="code">API_REQ</span> :: "sku_290_holiday" returns 200 OK</div>
+          </div>
+          <div class="intel-log">
+            <div><span class="code">HIST_DAT</span> :: Last year drop time: 09:48 AM PT</div>
           </div>
         </div>
       </div>
@@ -346,90 +316,34 @@
   </div>
 
   <div class="fab-container">
-    
-    <button class="fab-btn main-action" onclick="window.open('https://www.pokemoncenter.com/', '_blank')" title="Open Site">
+    <button class="fab-btn" onclick="window.open('https://www.pokemoncenter.com/', '_blank')">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
     </button>
-
-    <button class="fab-btn" id="refreshBtn" title="Scan Now">
+    <button class="fab-btn" onclick="toggleSim()">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
     </button>
-
-    <button class="fab-btn" id="soundBtn" title="Toggle Audio">
-      <svg id="soundIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-    </button>
-
-    <button class="fab-btn" id="notifyBtn" title="Notifications">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-    </button>
-
   </div>
 
   <script>
-    let isQueueLive = false;
-    let soundOn = true;
-    // Using a reliable beep sound
-    const alertSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3');
-
-    const soundBtn = document.getElementById('soundBtn');
-    const soundIcon = document.getElementById('soundIcon');
-    const pill = document.getElementById('queuePill');
+    // Simple simulation script
+    let isLive = false;
     const dot = document.getElementById('statusDot');
     const label = document.getElementById('queueLabel');
-
-    // Toggle Sound Icon
-    soundBtn.onclick = () => { 
-      soundOn = !soundOn;
-      soundBtn.style.color = soundOn ? 'var(--cyan)' : '#555';
-    };
-
-    document.getElementById('notifyBtn').onclick = () => {
-      Notification.requestPermission().then(perm => {
-        if(perm === 'granted') alert("Systems Armed");
-      });
-    };
-
-    document.getElementById('refreshBtn').onclick = () => {
-      const btn = document.getElementById('refreshBtn');
-      btn.style.transform = 'rotate(360deg)';
-      setTimeout(() => btn.style.transform = 'none', 500);
-      scan();
-    };
-
-    function scan() {
-      // Simulating a random status for demo purposes
-      const live = Math.random() > 0.7; // 30% chance of "Live" for demo
-
-      if (live) {
-        if (!isQueueLive) {
-          // State Change: To Live
-          isQueueLive = true;
-          dot.classList.add('alert');
-          label.textContent = 'QUEUE DETECTED';
-          label.style.color = 'var(--magenta)';
-          label.style.textShadow = '0 0 20px var(--magenta)';
-          
-          if (soundOn) alertSound.play();
-          
-          if (Notification.permission === 'granted') {
-            new Notification("COMMAND CENTER", { body: "QUEUE IS LIVE!" });
-          }
-        }
+    
+    function toggleSim() {
+      isLive = !isLive;
+      if(isLive) {
+        dot.classList.add('live');
+        label.textContent = "QUEUE LIVE DETECTED";
+        label.style.color = "var(--magenta)";
+        label.style.textShadow = "0 0 15px var(--magenta)";
       } else {
-        if (isQueueLive || !isQueueLive) {
-           // State Change: To Normal
-           isQueueLive = false;
-           dot.classList.remove('alert');
-           label.textContent = 'SYSTEM NORMAL';
-           label.style.color = '#fff';
-           label.style.textShadow = '0 0 10px rgba(0,255,255,0.5)';
-        }
+        dot.classList.remove('live');
+        label.textContent = "MONITORING";
+        label.style.color = "var(--text)";
+        label.style.textShadow = "none";
       }
     }
-
-    // Initial scan
-    scan();
-    setInterval(scan, 8000);
   </script>
 </body>
 </html>
