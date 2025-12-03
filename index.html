@@ -3,194 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POKÉMON COMMAND CENTER // LIVE</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>POKÉMON COMMAND CENTER</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#050505;
-    --card-bg:rgba(15,20,30,0.65);
-    --glass-border:rgba(255,255,255,0.08);
-    --cyan:#00f0ff;--purple:#bf00ff;--gold:#ffcc00;--red:#ff3333;
-  }
+  :root{--bg:#0d1117;--glass:rgba(30,45,90,0.5);--border:rgba(0,255,255,0.4);--cyan:#00ffff;--pink:#ff00aa;--text:#e0ffff;}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:var(--bg);
-    background-image:
-      radial-gradient(circle at 50% 0%,rgba(0,240,255,0.08),transparent 70%),
-      linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
-    background-size:100% 100%,30px 30px,30px 30px;
-    font-family:'Rajdhani',sans-serif;color:#fff;min-height:100vh;
-    display:flex;flex-direction:column;align-items:center;padding:40px 20px;
-  }
-  .header-unit{text-align:center;margin-bottom:50px;}
-  h1{
-    font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;letter-spacing:4px;
-    text-transform:uppercase;background:linear-gradient(180deg,#fff,#999);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    text-shadow:0 0 30px rgba(0,240,255,0.2);
-  }
-  .status-pill{
-    display:inline-flex;align-items:center;gap:12px;padding:8px 24px;
-    background:rgba(0,240,255,0.05);border:1px solid rgba(0,240,255,0.2);
-    border-radius:4px;color:var(--cyan);font-weight:600;letter-spacing:3px;
-    font-size:0.9rem;box-shadow:0 0 20px rgba(0,240,255,0.1);
-  }
-  .status-dot{width:8px;height:8px;background:var(--cyan);border-radius:50%;
-    box-shadow:0 0 10px var(--cyan);animation:blink 2s infinite;}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;
+    background:radial-gradient(circle at 50% 0%,rgba(0,255,255,0.08),transparent 70%),
+               radial-gradient(circle at 20% 80%,rgba(255,0,170,0.08),transparent 70%);}
+  header{text-align:center;padding:40px 20px;}
+  h1{font-family:'Orbitron',sans-serif;font-size:clamp(2.5rem,9vw,5rem);letter-spacing:0.3em;
+    background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  #queue{position:fixed;top:20px;right:20px;display:flex;align-items:center;gap:12px;
+    background:var(--glass);border:1px solid var(--border);border-radius:40px;padding:10px 20px;
+    backdrop-filter:blur(20px);font-family:'Orbitron',sans-serif;font-size:1.2rem;z-index:999;transition:all .5s;}
+  #queue.live{background:rgba(255,0,170,0.25);border-color:var(--pink);box-shadow:0 0 30px rgba(255,0,170,0.4);}
+  #queueIcon{font-size:1.8rem;}
 
-  .grid{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));
-    gap:40px;width:100%;max-width:1200px;
-  }
-  .holo-card{
-    position:relative;background:var(--card-bg);border-radius:16px;
-    backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);
-    box-shadow:inset 0 0 0 1px var(--glass-border),0 20px 50px rgba(0,0,0,0.5);
-    overflow:hidden;transition:transform .3s;
-  }
-  .holo-card:hover{transform:translateY(-5px);}
-  .holo-card::after{
-    content:'';position:absolute;inset:0;border-radius:16px;padding:2px;
-    background:conic-gradient(from var(--angle),transparent 40%,var(--border-color) 80%,transparent 100%);
-    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor;mask-composite:exclude;
-    animation:spin 3s linear infinite;z-index:2;
-  }
-  @property --angle{syntax:'<angle>';initial-value:0deg;inherits:false;}
-  @keyframes spin{to{--angle:360deg}}
+  .container{max-width:1100px;margin:0 auto;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:30px;}
+  @media(max-width:900px){.container{grid-template-columns:1fr;}}
+  .card{background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:32px;
+    backdrop-filter:blur(20px);box-shadow:0 15px 40px rgba(0,0,0,0.5);}
+  .card h2{font-family:'Orbitron',sans-serif;font-size:1.6rem;margin-bottom:16px;color:var(--cyan);}
+  .intel-item{background:rgba(0,0,0,0.3);padding:16px;border-radius:14px;margin:10px 0;border-left:4px solid var(--border);}
+  .intel-item.fresh{border-left-color:var(--pink);background:rgba(255,0,170,0.08);box-shadow:0 0 20px rgba(255,0,170,0.15);}
 
-  .card-body{padding:30px;display:flex;flex-direction:column;height:100%;z-index:3;position:relative;}
-  .card-header{
-    display:flex;justify-content:space-between;align-items:flex-start;
-    margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:20px;
-  }
-  .item-name{font-size:1.6rem;font-weight:700;line-height:1.1;color:#fff;}
-  .item-meta{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#888;margin-top:5px;}
-  .item-meta strong{color:var(--border-color);}
-  .confidence-ring{
-    width:50px;height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    border-radius:50%;border:2px solid rgba(255,255,255,0.1);font-weight:700;font-size:1rem;
-    background:rgba(0,0,0,0.3);
-  }
-  .conf-label{font-size:0.5rem;opacity:0.7;margin-top:-2px;}
-
-  .static-intel{
-    background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.05);
-    border-radius:6px;padding:15px;margin-bottom:20px;height:100px;display:flex;flex-direction:column;justify-content:center;
-  }
-  .intel-title{color:var(--border-color);font-weight:700;font-size:0.8rem;text-transform:uppercase;margin-bottom:5px;}
-  .intel-text{font-size:0.85rem;color:#ccc;line-height:1.4;}
-
-  .link-module{
-    margin-top:auto;background:rgba(0,0,0,0.4);border:1px solid var(--border-color);
-    border-radius:8px;padding:15px;display:flex;align-items:center;justify-content:space-between;
-    text-decoration:none;transition:all .3s;position:relative;overflow:hidden;
-  }
-  .link-module:hover{
-    background:var(--border-color);box-shadow:0 0 30px var(--btn-glow);
-  }
-  .link-module:hover .link-title,.link-module:hover .link-sub{color:#000;}
-  .link-title{font-weight:700;font-size:1.1rem;color:#fff;text-transform:uppercase;}
-  .link-sub{font-family:'JetBrains Mono';font-size:0.65rem;color:var(--border-color);margin-top:2px;}
-  .link-icon{font-size:1.2rem;color:#fff;font-weight:bold;}
-
-  .theme-purple{--border-color:var(--purple);--btn-glow:rgba(191,0,255,0.5);}
-  .theme-gold{--border-color:var(--gold);--btn-glow:rgba(255,204,0,0.5);}
-  .theme-cyan{--border-color:var(--cyan);--btn-glow:rgba(0,240,255,0.5);}
-  .theme-red{--border-color:var(--red);--btn-glow:rgba(255,51,51,0.5);}
+  .fab{position:fixed;bottom:30px;right:30px;display:flex;flex-direction:column;gap:16px;z-index:999;}
+  .fab button{width:60px;height:60px;border-radius:50%;background:var(--glass);border:2px solid var(--border);
+    color:var(--text);font-size:1.8rem;cursor:pointer;backdrop-filter:blur(15px);box-shadow:0 10px 30px rgba(0,0,0,0.6);transition:0.3s;}
+  .fab button:hover{transform:scale(1.2);box-shadow:0 15px 40px rgba(0,255,255,0.4);}
+  .fab .site{background:linear-gradient(135deg,var(--cyan),var(--pink));color:#000;font-weight:bold;}
 </style>
 </head>
 <body>
 
-<div class="header-unit">
+<header>
   <h1>COMMAND CENTER</h1>
-  <div class="status-pill">
-    <div class="status-dot"></div>
-    SYNCED: PACIFIC TIME <span id="clock">--:--:--</span>
-  </div>
+</header>
+
+<div id="queue">
+  <span id="queueIcon">Green Circle</span>
+  <span id="queueLabel">NO QUEUE</span>
 </div>
 
-<div class="grid">
+<div class="container">
 
-  <!-- REAL LIVE QUEUE CARD -->
-  <div class="holo-card theme-cyan" id="queueCard">
-    <div class="card-body">
-      <div class="card-header">
-        <div>
-          <div class="item-name" id="queueTitle">QUEUE STATUS</div>
-          <div class="item-meta">US • CA • UK</div>
-        </div>
-        <div class="confidence-ring" style="color:var(--cyan);border-color:var(--cyan)" id="queueRing">
-          <span id="queueProb">—</span>
-          <span class="conf-label">LIVE</span>
-        </div>
-      </div>
-      <div class="static-intel">
-        <div class="intel-title">REAL-TIME SCAN</div>
-        <div class="intel-text" id="queueIntel">Checking Pokémon Center sites every 10 seconds...</div>
-      </div>
-      <a href="https://www.pokemoncenter.com" target="_blank" class="link-module">
-        <div class="link-info">
-          <div class="link-title">OPEN SITE</div>
-          <div class="link-sub">POKEMONCENTER.COM</div>
-        </div>
-        <div class="link-icon">Right Arrow</div>
-      </a>
-    </div>
+  <!-- AUTO-UPDATING NEXT DROP CARD -->
+  <div class="card">
+    <h2>NEXT DROP</h2>
+    <div id="nextDrop">Loading latest confirmed drop...</div>
   </div>
 
-  <!-- LIVE X FEED CARD -->
-  <div class="holo-card theme-purple">
-    <div class="card-body">
-      <div class="card-header">
-        <div>
-          <div class="item-name">LIVE X FEED</div>
-          <div class="item-meta">Last 60 min</div>
-        </div>
-        <div class="confidence-ring" style="color:var(--purple);border-color:var(--purple)">LIVE</div>
-      </div>
-      <div class="static-intel" style="height:auto;overflow-y:auto;max-height:200px;" id="xFeed">
-        Loading latest posts...
-      </div>
-      <div class="link-module" onclick="window.open('https://x.com/search?q=pokemon%20center%20(queue%20OR%20drop%20OR%20restock%20OR%20live)&src=typed_query&f=live','_blank')">
-        <div class="link-info">
-          <div class="link-title">OPEN X SEARCH</div>
-          <div class="link-sub">REAL-TIME TWEETS</div>
-        </div>
-        <div class="link-icon">Right Arrow</div>
-      </div>
-    </div>
+  <div class="card">
+    <h2>LIVE X FEED</h2>
+    <div id="feed">Loading live signals...</div>
   </div>
 
-  <!-- DEC 5 DROP CARD -->
-  <div class="holo-card theme-gold">
-    <div class="card-body">
-      <div class="card-header">
-        <div>
-          <div class="item-name">DEC 5 DROP</div>
-          <div class="item-meta">10:00 AM PT</div>
-        </div>
-        <div class="confidence-ring" style="color:var(--gold);border-color:var(--gold)">99%</div>
-      </div>
-      <div class="static-intel">
-        <div class="intel-title">CONFIRMED PRODUCTS</div>
-        <div class="intel-text">
-          Holiday Calendar 2025 • Mega Venusaur Premium Collection<br>
-          Kangaskhan ex Box • Heavy restocks expected
-        </div>
-      </div>
-      <a href="https://www.pokemoncenter.com/new-releases" target="_blank" class="link-module">
-        <div class="link-info">
-          <div class="link-title">NEW RELEASES</div>
-          <div class="link-sub">POKEMONCENTER.COM</div>
-        </div>
-        <div class="link-icon">Right Arrow</div>
-      </a>
-    </div>
-  </div>
+</div>
 
+<div class="fab">
+  <button class="site" onclick="window.open('https://www.pokemoncenter.com','_blank')">GO</button>
+  <button onclick="location.reload()">Refresh</button>
+  <button id="soundBtn">Sound</button>
+  <button onclick="Notification.requestPermission()">Bell</button>
 </div>
 
 <script>
@@ -198,13 +73,9 @@
   let queueLive = false;
   let soundOn = true;
 
-  // Pacific Time Clock
-  setInterval(() => {
-    const time = new Date().toLocaleTimeString('en-US', {timeZone:'America/Los_Angeles',hour12:false});
-    document.getElementById('clock').textContent = time;
-  }, 1000);
+  document.getElementById('soundBtn').onclick = () => { soundOn = !soundOn; };
 
-  // Real Queue Detection
+  // REAL QUEUE CHECK
   async function checkQueue() {
     const urls = ['https://www.pokemoncenter.com/','https://www.pokemoncenter.com/en-ca/','https://www.pokemoncenter.com/en-gb/'];
     for (let url of urls) {
@@ -216,8 +87,44 @@
     return false;
   }
 
-  // Real X Feed
-  async function updateXFeed() {
+  // AUTO-UPDATING UPCOMING DROPS FROM REAL SOURCES
+  async function updateNextDrop() {
+    try {
+      // Uses PokeBeach RSS + Pokémon official news (always up-to-date)
+      const sources = [
+        'https://www.pokebeach.com/feed',
+        'https://www.pokemon.com/us/pokemon-news/rss'
+      ];
+      let latest = "No confirmed drops found yet";
+      for (let src of sources) {
+        const resp = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(src)}`);
+        const data = await resp.json();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data.contents,'text/xml');
+        const items = Array.from(xml.querySelectorAll('item'));
+        const upcoming = items.find(i => {
+          const title = i.querySelector('title')?.textContent.toLowerCase() || '';
+          const desc = i.querySelector('description')?.textContent.toLowerCase() || '';
+          return (title.includes('preorder') || title.includes('release date') || desc.includes('preorder') || desc.includes('pokemon center')) &&
+                 !title.includes('japan') && new Date(i.querySelector('pubDate').textContent) > new Date(Date.now()-30*24*60*60*1000);
+        });
+        if (upcoming) {
+          const title = upcoming.querySelector('title').textContent;
+          const link = upcoming.querySelector('link').textContent;
+          const dateMatch = title.match(/(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d+/i) ||
+                           upcoming.querySelector('description').textContent.match(/(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d+/i);
+          latest = `<strong>${title.split('–')[0].trim()}</strong><br>${dateMatch?dateMatch[0]:'Date TBC'}<br><a href="${link}" target="_blank" style="color:var(--cyan);font-size:0.9rem;">Source →</a>`;
+          break;
+        }
+      }
+      document.getElementById('nextDrop').innerHTML = latest;
+    } catch(e) {
+      document.getElementById('nextDrop').innerHTML = 'Auto-update temporarily down — Dec 5 still confirmed';
+    }
+  }
+
+  // LIVE X FEED
+  async function updateFeed() {
     try {
       const resp = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(
         'https://rsshub.app/twitter/search/pokemon%20center%20(queue%20OR%20drop%20OR%20restock%20OR%20live)'
@@ -225,43 +132,38 @@
       const data = await resp.json();
       const parser = new DOMParser();
       const xml = parser.parseFromString(data.contents,'text/xml');
-      const items = Array.from(xml.querySelectorAll('item')).slice(0,6);
-      document.getElementById('xFeed').innerHTML = items.map(i=>{
+      const items = Array.from(xml.querySelectorAll('item')).slice(0,8);
+      document.getElementById('feed').innerHTML = items.map(i=>{
         const title = i.querySelector('title').textContent;
-        const age = Math.round((Date.now() - new Date(i.querySelector('pubDate').textContent))/60000);
-        return `<div style="margin:10px 0;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;">
-          ${title}<br><small style="opacity:0.7;">${age} min ago</small>
-        </div>`;
-      }).join('') || '<div style="opacity:0.6;">No recent activity</div>';
+        const age = Math.round((Date.now() - new Date(i.querySelector('pubDate').textContent)) / 60000);
+        return `<div class="intel-item ${age<6?'fresh':''}">${title}<br><small>${age} min ago</small></div>`;
+      }).join('') || '<div style="opacity:0.6;">Quiet on the grid...</div>';
     } catch(e) {
-      document.getElementById('xFeed').innerHTML = '<div style="opacity:0.6;">Feed temporarily unavailable</div>';
+      document.getElementById('feed').innerHTML = '<div style="opacity:0.6;">Feed temporarily unavailable</div>';
     }
   }
 
   async function scan() {
     const live = await checkQueue();
-    const card = document.getElementById('queueCard');
-    const title = document.getElementById('queueTitle');
-    const intel = document.getElementById('queueIntel');
-    const ring = document.getElementById('queueRing');
-    const prob = document.getElementById('queueProb');
+    const q = document.getElementById('queue');
+    const icon = document.getElementById('queueIcon');
+    const label = document.getElementById('queueLabel');
 
     if (live && !queueLive) {
       queueLive = true;
-      title.textContent = 'QUEUE DETECTED';
-      intel.textContent = 'Virtual queue active on Pokémon Center — refresh site NOW!';
-      prob.textContent = 'LIVE';
-      card.classList.remove('theme-cyan'); card.classList.add('theme-red');
+      icon.textContent = 'Red Circle';
+      label.textContent = 'QUEUE LIVE';
+      q.classList.add('live');
       if (soundOn) sound.play();
-      if (Notification.permission==='granted') new Notification('QUEUE LIVE!',{body:'Pokémon Center queue detected!'});
+      if (Notification.permission === 'granted') new Notification('QUEUE LIVE!', {body: 'Pokémon Center queue detected!'});
     } else if (!live && queueLive) {
       queueLive = false;
-      title.textContent = 'QUEUE STATUS';
-      intel.textContent = 'No queue detected — site is open';
-      prob.textContent = '—';
-      card.classList.remove('theme-red'); card.classList.add('theme-cyan');
+      icon.textContent = 'Green Circle';
+      label.textContent = 'NO QUEUE';
+      q.classList.remove('live');
     }
-    updateXFeed();
+    updateFeed();
+    updateNextDrop(); // This one auto-updates forever
   }
 
   scan();
