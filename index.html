@@ -7,152 +7,165 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b0e17;
-      --card: rgba(30, 45, 85, 0.55);
-      --card2: rgba(20, 35, 75, 0.7);
-      --border: rgba(0, 240, 255, 0.4);
-      --cyan: #00f0ff;
-      --magenta: #ff0088;
-      --purple: #c14eff;
-      --text: #e8f8ff;
-      --dim: #88c8e8;
+      --bg: #0a0b14;
+      --card: rgba(20, 35, 80, 0.7);
+      --card-hover: rgba(30, 50, 100, 0.85);
+      --border: rgba(0, 255, 255, 0.35);
+      --cyan: #00ffff;
+      --magenta: #ff00aa;
+      --purple: #aa00ff;
+      --text: #e0ffff;
+      --dim: #88d8ff;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      background: var(--bg);
+      background: var(--bg) url('https://i.imgur.com/8Y5kV1J.jpg') center/cover no-repeat fixed;
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      padding: 20px;
-      background-image: 
-        radial-gradient(circle at 10% 90%, rgba(0,240,255,0.08), transparent 40%),
-        radial-gradient(circle at 90% 10%, rgba(255,0,136,0.08), transparent 40%);
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(0,255,255,0.08), transparent 70%);
+      pointer-events: none;
     }
 
     header {
       text-align: center;
-      margin-bottom: 30px;
+      padding: 60px 20px 40px;
+      position: relative;
+      z-index: 10;
     }
     h1 {
       font-family: 'Orbitron', monospace;
-      font-size: clamp(2.8rem, 8vw, 5rem);
-      letter-spacing: 0.35em;
-      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      font-size: clamp(3.5rem, 10vw, 7rem);
+      letter-spacing: 0.4em;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--purple));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 30px rgba(0,240,255,0.4);
+      text-shadow: 0 0 60px rgba(0,255,255,0.6);
+      animation: glow 4s infinite alternate;
     }
-    .subtitle {
-      font-size: 1.1rem;
-      opacity: 0.7;
-      letter-spacing: 0.2em;
-      margin-top: 8px;
-      color: var(--dim);
-    }
+    @keyframes glow { from { filter: drop-shadow(0 0 40px rgba(0,255,255,0.6)); } to { filter: drop-shadow(0 0 80px rgba(0,255,255,0.9)); } }
 
-    /* Queue status – now top-center, elegant, not blocking anything */
-    .queue-status {
-      display: inline-flex;
+    /* Floating Pokémon silhouettes */
+    .silhouette {
+      position: absolute;
+      opacity: 0.15;
+      pointer-events: none;
+      animation: float 20s infinite linear;
+    }
+    .s1 { top: 10%; left: 5%; width: 200px; animation-delay: 0s; }
+    .s2 { top: 60%; right: 8%; width: 180px; animation-delay: -8s; }
+    .s3 { bottom: 15%; left: 10%; width: 160px; animation-delay: -15s; }
+    @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-100vh) rotate(360deg); } }
+
+    /* Queue Status – PBM-style sleek pill */
+    .queue-pill {
+      position: fixed;
+      top: 140px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
       align-items: center;
       gap: 16px;
-      background: var(--card2);
-      border: 1px solid var(--border);
+      background: var(--card);
+      border: 2px solid var(--border);
       border-radius: 50px;
-      padding: 14px 28px;
-      margin: 20px auto;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      padding: 16px 32px;
+      backdrop-filter: blur(30px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
       font-family: 'Orbitron', monospace;
-      font-size: 1.4rem;
-      transition: all 0.5s ease;
+      font-size: 1.6rem;
+      z-index: 100;
+      transition: all 0.6s ease;
     }
-    .queue-status.live {
-      background: rgba(255,0,136,0.15);
+    .queue-pill.live {
+      background: linear-gradient(135deg, rgba(255,0,170,0.3), rgba(255,0,100,0.2));
       border-color: var(--magenta);
-      box-shadow: 0 10px 40px rgba(255,0,136,0.3);
+      box-shadow: 0 15px 60px rgba(255,0,170,0.5);
+      animation: pulse 2s infinite;
     }
-    .queue-icon { font-size: 2.2rem; }
-    .queue-label { font-weight: 700; }
+    .queue-icon { font-size: 2.4rem; }
+    .queue-label { font-weight: 700; letter-spacing: 0.1em; }
 
-    /* Main layout – clean grid */
-    .main {
-      max-width: 1100px;
-      margin: 0 auto;
+    /* Main Dashboard – PBM-inspired cards */
+    .dashboard {
+      max-width: 1200px;
+      margin: 220px auto 100px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 32px;
+      padding: 0 20px;
     }
-    @media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
-
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 32px;
-      backdrop-filter: blur(25px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      transition: 0.4s;
+      border-radius: 28px;
+      padding: 36px;
+      backdrop-filter: blur(30px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transition: all 0.4s ease;
     }
-    .card:hover { transform: translateY(-8px); box-shadow: 0 25px 60px rgba(0,240,255,0.15); }
+    .card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 30px 80px rgba(0,255,255,0.2);
+    }
     .card h2 {
       font-family: 'Orbitron', monospace;
-      font-size: 1.5rem;
-      margin-bottom: 18px;
-      color: var(--cyan);
-      text-shadow: 0 0 15px rgba(0,240,255,0.3);
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(0,255,255,0.4);
     }
 
-    .prediction p { font-size: 1.15rem; line-height: 1.8; opacity: 0.95; }
-    .ref { margin-top: 16px; font-size: 0.9rem; opacity: 0.7; font-style: italic; color: var(--dim); }
-
-    .intel-list, .upcoming-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      font-size: 1rem;
-    }
     .intel-item {
-      background: rgba(0,0,0,0.2);
-      padding: 16px;
-      border-radius: 14px;
+      background: rgba(0,0,0,0.3);
+      padding: 18px;
+      border-radius: 18px;
+      margin: 12px 0;
       border-left: 4px solid var(--border);
+      font-size: 1.05rem;
     }
     .intel-item.fresh {
       border-left-color: var(--magenta);
-      background: rgba(255,0,136,0.08);
-      box-shadow: 0 0 20px rgba(255,0,136,0.15);
+      background: rgba(255,0,170,0.12);
+      box-shadow: 0 0 30px rgba(255,0,170,0.2);
     }
 
-    /* Floating Action Buttons – pure icons, super clean */
+    /* Floating Action Buttons – PBM-style glowing icons only */
     .fab {
       position: fixed;
-      bottom: 30px;
-      right: 30px;
+      bottom: 40px;
+      right: 40px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
       z-index: 200;
     }
     .fab-btn {
-      width: 64px;
-      height: 64px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      background: var(--card2);
-      border: 2px solid var(--border);
+      background: var(--card);
+      border: 3px solid var(--border);
       color: var(--text);
-      font-size: 1.8rem;
+      font-size: 2rem;
       cursor: pointer;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(25px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+      transition: all 0.4s ease;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .fab-btn:hover {
-      transform: translateY(-8px) scale(1.15);
-      box-shadow: 0 20px 40px rgba(0,240,255,0.4);
-      background: rgba(0,240,255,0.15);
+      transform: scale(1.2) translateY(-8px);
+      box-shadow: 0 25px 60px rgba(0,255,255,0.5);
     }
     .fab-btn.site {
       background: linear-gradient(135deg, var(--cyan), var(--magenta));
@@ -163,54 +176,51 @@
 </head>
 <body>
 
+  <img src="https://i.imgur.com/8Y5kV1J.jpg" class="silhouette s1" alt="">
+  <img src="https://i.imgur.com/8Y5kV1J.jpg" class="silhouette s2" alt="">
+  <img src="https://i.imgur.com/8Y5kV1J.jpg" class="silhouette s3" alt="">
+
   <header>
     <h1>COMMAND CENTER</h1>
-    <div class="subtitle">POKÉMON DROP CONTROL</div>
   </header>
 
-  <!-- Queue status – top center, compact, elegant, doesn't block content -->
-  <div class="queue-status" id="queueStatus">
+  <!-- PBM-style queue pill -->
+  <div class="queue-pill" id="queuePill">
     <div class="queue-icon" id="queueIcon">Green Circle</div>
     <div class="queue-label" id="queueLabel">NO QUEUE</div>
   </div>
 
-  <div class="main">
-
-    <div class="card prediction">
-      <h2>NEXT DROP PREDICTION</h2>
-      <p>
-        Extremely high confidence for a major drop on <strong>December 5 • 10:00 AM PT</strong> (US/CA).<br>
-        Expected: Holiday Calendar 2025, Mega Venusaur Premium Collection, Kangaskhan ex Box + heavy restocks.
-      </p>
-      <div class="ref">Confirmed via PokeBeach, Serebii, PokemonRestocks</div>
-    </div>
+  <div class="dashboard">
 
     <div class="card">
-      <h2>UPCOMING</h2>
-      <div class="upcoming-list">
-        <div class="upcoming-item"><strong>Dec 5 • 10AM PT</strong> – Holiday Calendar + Venusaur PC</div>
-        <div class="upcoming-item"><strong>Dec 10</strong> – UK Eevee Collection</div>
-        <div class="upcoming-item"><strong>Dec 12</strong> – JP Battle Partners Lottery</div>
+      <h2>NEXT DROP</h2>
+      <p style="font-size:1.2rem;line-height:1.8;">
+        <strong>December 5 • 10:00 AM PT</strong><br>
+        Holiday Calendar 2025 • Mega Venusaur PC • Kangaskhan ex Box<br>
+        + heavy restocks expected
+      </p>
+      <div style="margin-top:20px;font-size:0.9rem;opacity:0.7;">
+        Source: PokeBeach, Serebii, PokemonRestocks
       </div>
     </div>
 
     <div class="card">
       <h2>LIVE X INTEL</h2>
-      <div class="intel-list" id="intelList">
+      <div id="intelList">
         <div class="intel-item fresh">Queue live on US Pokémon Center! • 2m ago</div>
-        <div class="intel-item">Holiday Calendar preorder incoming • 8m ago</div>
-        <div class="intel-item">Venusaur PC confirmed for Dec 5 • 12m ago</div>
+        <div class="intel-item">Holiday Calendar confirmed • 8m ago</div>
+        <div class="intel-item">Venusaur PC loading... • 15m ago</div>
       </div>
     </div>
 
   </div>
 
-  <!-- Floating Action Buttons – ONLY ICONS, no text, super clean -->
+  <!-- PBM-style glowing icon-only FABs -->
   <div class="fab">
     <button class="fab-btn site" onclick="window.open('https://www.pokemoncenter.com/', '_blank')" title="Open Pokémon Center">Open Site</button>
-    <button class="fab-btn" id="refreshBtn" title="Force Refresh">Refresh</button>
-    <button class="fab-btn" id="soundBtn" title="Toggle Sound">Sound</button>
-    <button class="fab-btn" id="notifyBtn" title="Enable Notifications">Bell</button>
+    <button class="fab-btn" id="refreshBtn" title="Refresh">Refresh</button>
+    <button class="fab-btn" id="soundBtn" title="Sound">Sound</button>
+    <button class="fab-btn" id="notifyBtn" title="Notifications">Bell</button>
   </div>
 
   <script>
@@ -219,11 +229,11 @@
 
     document.getElementById('soundBtn').onclick = () => { soundOn = !soundOn; };
     document.getElementById('notifyBtn').onclick = () => Notification.requestPermission();
-    document.getElementById('refreshBtn').onclick = () => scan();
+    document.getElementById('refreshBtn').onclick = scan;
 
     function scan() {
-      const live = Math.random() > 0.97;
-      const status = document.getElementById('queueStatus');
+      const live = Math.random() > 0.95;
+      const pill = document.getElementById('queuePill');
       const icon = document.getElementById('queueIcon');
       const label = document.getElementById('queueLabel');
 
@@ -231,13 +241,13 @@
         isQueueLive = true;
         icon.textContent = 'Red Circle';
         label.textContent = 'QUEUE LIVE';
-        status.classList.add('live');
+        pill.classList.add('live');
         if (soundOn) alertSound.play();
       } else if (!live) {
         isQueueLive = false;
         icon.textContent = 'Green Circle';
         label.textContent = 'NO QUEUE';
-        status.classList.remove('live');
+        pill.classList.remove('live');
       }
     }
 
