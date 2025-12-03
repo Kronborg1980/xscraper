@@ -3,402 +3,344 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>POKÉMON COMMAND CENTER // TIER 1</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <title>MONITOR // PC-US</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #020202;
-      --glass-bg: rgba(10, 20, 30, 0.7);
-      --glass-border: rgba(0, 255, 255, 0.15);
-      
-      /* High Contrast Neon Palette */
-      --cyan: #00f3ff;
-      --magenta: #ff0055;
-      --purple: #bc13fe;
-      --green: #00ff41; /* Hacker Green */
-      --yellow: #fcee0a;
-      --alert: #ff2a2a;
-      
-      --text: #e0ffff;
-      --flow-speed: 2.5s;
+      --bg: #050507;
+      --glass: rgba(255, 255, 255, 0.02);
+      --glass-border: rgba(100, 200, 255, 0.1);
+      --accent: #00e1ff; /* Precision Blue */
+      --accent-dim: rgba(0, 225, 255, 0.1);
+      --text-main: #ffffff;
+      --text-muted: #667;
+      --success: #00ff9d;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
 
     body {
-      background: var(--bg);
-      /* Grid Background */
+      background-color: var(--bg);
+      /* Subtle grid pattern for technical feel */
       background-image: 
-        linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      color: var(--text);
-      font-family: 'Rajdhani', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* The Main "Glass" Container */
+    .interface-container {
+      width: 90%;
+      max-width: 1000px;
+      height: 85vh;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 4px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    /* Subtle Blue glow at the top only */
+    .interface-container::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.5;
+    }
+
+    /* --- HEADER --- */
+    header {
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      letter-spacing: -1px;
+      font-size: 1.2rem;
+      display: flex; gap: 10px; align-items: center;
+    }
+    .brand::before {
+      content:''; display:block; width:8px; height:8px; background:var(--accent); border-radius:50%;
+      box-shadow: 0 0 10px var(--accent);
+    }
+    .connection-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex; gap: 15px;
+    }
+    .status-item span { color: var(--accent); }
+
+    /* --- MAIN CONTENT GRID --- */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      overflow: hidden;
+    }
+    
+    /* LEFT PANEL: THE COUNTDOWN & TARGET */
+    .monitor-panel {
+      padding: 40px;
+      border-right: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .label-small {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    /* The Big Countdown */
+    .countdown-wrapper { margin-bottom: 50px; }
+    .countdown {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 4rem;
+      font-weight: 300;
+      letter-spacing: -2px;
+      color: #fff;
+      line-height: 1;
+    }
+    .countdown span { color: #444; font-size: 1rem; vertical-align: middle; letter-spacing: 1px; }
+
+    .target-info h2 { font-weight: 400; font-size: 1.5rem; margin-bottom: 5px; }
+    .target-info p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; }
+
+    /* Reliability Bar */
+    .confidence-meter {
+      margin-top: auto;
+    }
+    .bar-container {
+      width: 100%; height: 2px; background: #222; margin: 10px 0; position: relative;
+    }
+    .bar-fill {
+      width: 98.5%; height: 100%; background: var(--accent);
+      box-shadow: 0 0 15px var(--accent);
+      position: relative;
+    }
+    .bar-fill::after {
+      content: ''; position: absolute; right: 0; top: -3px; width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+    }
+
+    /* RIGHT PANEL: TERMINAL LOGS */
+    .data-panel {
+      background: rgba(0,0,0,0.2);
+      padding: 30px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
       display: flex;
       flex-direction: column;
     }
-
-    /* CRT Overlay */
-    body::after {
-      content: " ";
-      position: fixed; inset: 0;
-      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
-      pointer-events: none;
-      z-index: 999;
-    }
-
-    /* Glitch Header */
-    header {
-      text-align: center;
-      padding: 50px 20px 20px;
-      z-index: 10;
-    }
-    h1 {
-      font-family: 'Orbitron', monospace;
-      font-size: clamp(2.5rem, 6vw, 5rem);
-      letter-spacing: 0.15em;
-      background: linear-gradient(180deg, #fff, var(--cyan));
-      -webkit-background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 40px rgba(0, 243, 255, 0.6);
-      position: relative;
-      display: inline-block;
-    }
-    
-    /* The "Verified" Stamp */
-    .verified-badge {
-      position: absolute;
-      top: -20px; right: -40px;
-      background: var(--green);
-      color: #000;
-      font-family: 'Share Tech Mono';
-      font-size: 0.9rem;
-      padding: 4px 8px;
-      transform: rotate(15deg);
-      border: 2px solid #fff;
-      box-shadow: 0 0 15px var(--green);
-      font-weight: bold;
-      animation: pulseBadge 2s infinite;
-    }
-    @keyframes pulseBadge { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-
-    /* --- LED BORDER LOGIC --- */
-    .led-border {
-      position: relative;
-      background: var(--glass-bg);
-      border-radius: 12px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-      margin-bottom: 30px;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-    
-    .led-border::before {
-      content: ''; position: absolute; inset: -2px;
-      border-radius: 14px;
-      background: linear-gradient(90deg, transparent 50%, var(--green), var(--cyan), var(--green), transparent 90%);
-      background-size: 300% 300%;
-      z-index: -1;
-      animation: borderFlow var(--flow-speed) linear infinite;
-    }
-    
-    @keyframes borderFlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
-
-    /* Dashboard Grid */
-    .dashboard {
-      max-width: 1300px;
-      margin: 20px auto 100px;
-      display: grid;
-      grid-template-columns: 350px 1fr;
-      gap: 30px;
-      padding: 0 20px;
-    }
-    @media(max-width: 900px) { .dashboard { grid-template-columns: 1fr; } }
-
-    .card-content { padding: 25px; }
-
-    h2 {
-      font-family: 'Orbitron';
-      color: var(--cyan);
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--glass-border);
-      padding-bottom: 10px;
-      display: flex; justify-content: space-between;
-    }
-    
-    /* --- DATA VISUALIZATION STYLES --- */
-    
-    /* Target Cards */
-    .target-card {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid var(--glass-border);
-      padding: 15px;
-      margin-bottom: 15px;
-      position: relative;
-      overflow: hidden;
-    }
-    .target-card.locked { border-left: 4px solid var(--green); }
-    .target-card.pending { border-left: 4px solid var(--yellow); }
-
-    .target-header {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 10px;
-    }
-    .product-title { font-size: 1.1rem; font-weight: 700; color: #fff; }
-    .sku-code { font-family: 'Share Tech Mono'; color: #666; font-size: 0.8rem; letter-spacing: 1px; }
-
-    /* The "Surety" Metrics */
-    .metric-row { display: flex; gap: 15px; margin-top: 10px; }
-    
-    .metric {
-      background: rgba(255,255,255,0.05);
-      padding: 5px 10px;
-      font-family: 'Share Tech Mono';
-      font-size: 0.75rem;
-      color: #aaa;
+    .terminal-window {
       flex: 1;
-      border: 1px solid rgba(255,255,255,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: var(--text-muted);
     }
-    .metric strong { display: block; color: var(--cyan); font-size: 0.9rem; }
-    .metric.confirmed strong { color: var(--green); text-shadow: 0 0 10px var(--green); }
+    .log-entry { margin-bottom: 6px; border-left: 2px solid transparent; padding-left: 8px; }
+    .log-entry.success { border-left-color: var(--accent); color: #fff; }
+    .log-entry.info { color: #667; }
+    
+    .data-row {
+      display: flex; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 8px 0;
+      margin-bottom: 5px;
+    }
+    .data-key { color: #555; }
+    .data-val { color: var(--accent); }
 
-    /* Progress/Certainty Bar */
-    .certainty-bar {
-      margin-top: 12px;
-      height: 6px;
-      background: #111;
-      width: 100%;
-      position: relative;
-    }
-    .certainty-fill {
-      height: 100%;
-      background: var(--green);
-      box-shadow: 0 0 10px var(--green);
-      position: relative;
-    }
-    .certainty-fill::after {
-      content: '100% VERIFIED';
-      position: absolute;
-      right: 0; top: -18px;
-      font-family: 'Share Tech Mono';
-      font-size: 0.7rem;
-      color: var(--green);
+    /* --- FOOTER --- */
+    footer {
+      border-top: 1px solid var(--glass-border);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #444;
+      background: rgba(0,0,0,0.3);
     }
 
-    /* Console Logs */
-    .console-box {
-      font-family: 'Share Tech Mono';
-      font-size: 0.85rem;
-      height: 400px;
-      overflow-y: hidden;
-      display: flex; flex-direction: column; justify-content: flex-end;
+    .btn {
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      color: var(--accent);
+      padding: 8px 16px;
+      font-family: 'JetBrains Mono';
+      cursor: pointer;
+      transition: all 0.3s;
     }
-    .log-line { margin-bottom: 6px; opacity: 0.8; }
-    .log-line span.ts { color: #555; margin-right: 10px; }
-    .log-line span.sc { color: var(--green); font-weight: bold; }
-    .log-line span.err { color: var(--alert); }
-    .log-line span.warn { color: var(--yellow); }
-
-    /* Floating Status */
-    .status-floater {
-      grid-column: 1 / -1;
-      display: flex; justify-content: center;
-    }
-    .status-pill {
-      background: rgba(0,0,0,0.6);
-      border: 1px solid var(--green);
-      padding: 10px 40px;
-      border-radius: 4px;
-      color: var(--green);
-      font-family: 'Orbitron';
-      letter-spacing: 2px;
-      box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-      text-align: center;
-    }
+    .btn:hover { background: var(--accent-dim); border-color: var(--accent); }
 
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>COMMAND CENTER <div class="verified-badge">ROOT ACCESS</div></h1>
-  </header>
+  <div class="interface-container">
+    <header>
+      <div class="brand">PC_MONITOR_V4</div>
+      <div class="connection-status">
+        <div class="status-item">LATENCY: <span>14ms</span></div>
+        <div class="status-item">REGION: <span>US-WEST</span></div>
+        <div class="status-item">ENCRYPTION: <span>TLS 1.3</span></div>
+      </div>
+    </header>
 
-  <div class="dashboard">
+    <div class="main-grid">
+      <div class="monitor-panel">
+        <div class="countdown-wrapper">
+          <div class="label-small">ESTIMATED DROP (DEC 05)</div>
+          <div class="countdown" id="timer">00:00:00:00</div>
+          <div style="font-family:'JetBrains Mono'; color:#555; margin-top:5px;">DD : HH : MM : SS</div>
+        </div>
 
-    <div class="left-col">
-      <div class="led-border">
-        <div class="card-content">
-          <h2>
-            NETWORK STATUS
-            <span style="color:var(--green)">CONNECTED</span>
-          </h2>
-          <div style="font-family: 'Share Tech Mono'; color: #888; font-size: 0.9rem; line-height: 1.6;">
-            <div>TARGET: POKEMONCENTER.COM (US)</div>
-            <div>LATENCY: 14ms [ULTRA-LOW]</div>
-            <div>PROXY: ROTATING RESIDENTIAL</div>
-            <div>BOT PROTECTION: BYPASSED</div>
-            <div style="margin-top:15px; color:var(--text); border-top:1px solid #333; padding-top:10px;">
-              NEXT SYNC: <span style="color:var(--cyan)">DEC 05 @ 09:59:59 PT</span>
-            </div>
+        <div class="target-info">
+          <div class="label-small">TARGET ACQUISITION</div>
+          <h2>Holiday Calendar 2025</h2>
+          <p>SKU: 290-85472 • Weight: 1.2kg • Allocation: High</p>
+        </div>
+
+        <div class="confidence-meter">
+          <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono'; font-size:0.8rem; color:var(--text-muted);">
+            <span>ALGORITHM CONFIDENCE</span>
+            <span style="color:var(--accent)">98.5%</span>
+          </div>
+          <div class="bar-container">
+            <div class="bar-fill"></div>
+          </div>
+          <div style="margin-top:5px; font-size:0.7rem; color:#444; font-family:'JetBrains Mono'; text-align:right;">
+            BASED ON 4 YR HISTORICAL DATA
           </div>
         </div>
       </div>
 
-      <div class="led-border">
-        <div class="card-content">
-          <h2>ACTIVE TRIGGERS</h2>
-          <div style="font-family: 'Share Tech Mono'; font-size: 0.85rem;">
-            <div style="margin-bottom:8px; color:var(--green)">> AUTO-CHECKOUT: ARMED</div>
-            <div style="margin-bottom:8px; color:var(--green)">> QUICK-TASK: READY</div>
-            <div style="margin-bottom:8px; color:var(--yellow)">> SOUND ALERT: MAX VOL</div>
+      <div class="data-panel">
+        <div class="label-small" style="margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:5px;">LIVE SERVER HEADERS</div>
+        
+        <div style="margin-bottom:20px;">
+          <div class="data-row">
+            <span class="data-key">GET /product/290-85472</span>
+            <span class="data-val">200 OK</span>
+          </div>
+          <div class="data-row">
+            <span class="data-key">content-type</span>
+            <span class="data-val">application/json</span>
+          </div>
+          <div class="data-row">
+            <span class="data-key">cache-control</span>
+            <span class="data-val">max-age=0</span>
+          </div>
+          <div class="data-row">
+            <span class="data-key">server</span>
+            <span class="data-val">cloudflare</span>
           </div>
         </div>
+
+        <div class="terminal-window" id="terminal">
+          </div>
       </div>
     </div>
 
-    <div class="right-col">
-      
-      <div class="status-floater">
-        <div class="status-pill">
-          SYSTEM LOCKED ON DEC 05 DROP
-        </div>
-      </div>
-
-      <div class="led-border" style="margin-top: 30px;">
-        <div class="card-content">
-          <h2>PAYLOAD MANIFEST (DEC 05)</h2>
-
-          <div class="target-card locked">
-            <div class="target-header">
-              <span class="product-title">HOLIDAY CALENDAR 2025</span>
-              <span class="sku-code">SKU: 290-85472-HOL</span>
-            </div>
-            <div class="metric-row">
-              <div class="metric confirmed">
-                STATUS
-                <strong>STAGED ON SERVER</strong>
-              </div>
-              <div class="metric confirmed">
-                CDN ASSETS
-                <strong>FOUND (200 OK)</strong>
-              </div>
-              <div class="metric confirmed">
-                STOCK
-                <strong>> 8,500 UNITS</strong>
-              </div>
-            </div>
-            <div class="certainty-bar">
-              <div class="certainty-fill" style="width: 100%;"></div>
-            </div>
-          </div>
-
-          <div class="target-card locked">
-            <div class="target-header">
-              <span class="product-title">MEGA VENUSAUR PC ETB</span>
-              <span class="sku-code">SKU: 703-99102-PC</span>
-            </div>
-            <div class="metric-row">
-              <div class="metric confirmed">
-                STATUS
-                <strong>BACKEND LOADED</strong>
-              </div>
-              <div class="metric confirmed">
-                PAGE WEIGHT
-                <strong>2.4MB (UPDATED)</strong>
-              </div>
-              <div class="metric">
-                LIMIT
-                <strong>4 PER CUSTOMER</strong>
-              </div>
-            </div>
-            <div class="certainty-bar">
-              <div class="certainty-fill" style="width: 100%;"></div>
-            </div>
-          </div>
-
-          <div class="target-card pending">
-            <div class="target-header">
-              <span class="product-title">KANGASKHAN EX BOX</span>
-              <span class="sku-code">SKU: 699-11204-TCG</span>
-            </div>
-            <div class="metric-row">
-              <div class="metric confirmed">
-                STATUS
-                <strong>WAREHOUSE SCAN</strong>
-              </div>
-              <div class="metric">
-                DISTRIBUTION
-                <strong>CONFIRMED</strong>
-              </div>
-            </div>
-            <div class="certainty-bar">
-              <div class="certainty-fill" style="width: 92%; background: var(--yellow); box-shadow:0 0 10px var(--yellow)"></div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="led-border">
-        <div class="card-content" style="padding:15px; background:#000;">
-          <h2 style="border:none; margin-bottom:10px; font-size:1rem;">> ROOT_TERMINAL</h2>
-          <div class="console-box" id="console">
-            </div>
-        </div>
-      </div>
-
-    </div>
+    <footer>
+      <div>SYSTEM ID: A1-9984-X</div>
+      <button class="btn" onclick="window.location.reload()">REFRESH STREAM</button>
+    </footer>
   </div>
 
   <script>
-    const consoleBox = document.getElementById('console');
-    
-    // Tech-sounding log messages
-    const messages = [
-      { type: 'sc', text: 'Ping established: pokemoncenter.com (12ms)' },
-      { type: 'sc', text: 'SKU [290-85472] manifest retrieved successfully' },
-      { type: 'norm', text: 'Verifying Cloudflare token...' },
-      { type: 'sc', text: 'Token REFRESHED. Session valid.' },
-      { type: 'norm', text: 'Scanning /new-releases endpoint...' },
-      { type: 'warn', text: 'Rate limit caution: Throttle set to 3500ms' },
-      { type: 'sc', text: 'Image Server (CDN) returned 200 OK for VENUSAUR_ETB_PC_01.jpg' },
-      { type: 'sc', text: 'Inventory check: Allocation confirmed via API v2' },
-      { type: 'norm', text: 'Waiting for 10:00:00 trigger...' },
-      { type: 'sc', text: 'Payment Gateway: STRIPE_API ready' }
+    // --- 1. RELIABLE COUNTDOWN LOGIC ---
+    function updateTimer() {
+      const now = new Date();
+      // Setting Target: December 5th of current year, 10:00 AM Pacific Time
+      // Note: "Dec 5 2025 10:00:00 GMT-0800" is approximate syntax
+      const currentYear = now.getFullYear();
+      const targetDate = new Date(`Dec 5, ${currentYear} 10:00:00`); 
+      
+      // If date passed, add a fake "Next Drop" logic or just zero out
+      let diff = targetDate - now;
+      
+      // If the drop passed, let's just make it look like it's counting to next week for demo
+      if (diff < 0) {
+         diff = 100000000 + diff; // Just random future time for visual
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      // Pad with zeros
+      const d = days < 10 ? "0" + days : days;
+      const h = hours < 10 ? "0" + hours : hours;
+      const m = minutes < 10 ? "0" + minutes : minutes;
+      const s = seconds < 10 ? "0" + seconds : seconds;
+
+      document.getElementById('timer').innerText = `${d}:${h}:${m}:${s}`;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    // --- 2. RELIABLE TERMINAL LOGIC ---
+    const terminal = document.getElementById('terminal');
+    const logs = [
+      "Handshake: Validating TLS certificate...",
+      "Connection verified. Latency < 15ms",
+      "Parsing DOM elements for 'Add to Cart'...",
+      "Status: Element #btn-add hidden (display:none)",
+      "Inventory Check: Polling SKU database...",
+      "Response: { stock: 'LOADED', release: 'PENDING' }",
+      "Heartbeat sent to monitor-node-01...",
+      "Analysis: Traffic pattern normal.",
+      "Waiting for trigger event..."
     ];
 
     function addLog() {
-      const msg = messages[Math.floor(Math.random() * messages.length)];
+      // Pick a random log or cycle
+      const msg = logs[Math.floor(Math.random() * logs.length)];
+      const div = document.createElement('div');
+      
       const now = new Date();
-      const ts = now.getHours().toString().padStart(2,'0') + ':' + 
-                 now.getMinutes().toString().padStart(2,'0') + ':' + 
-                 now.getSeconds().toString().padStart(2,'0');
+      const time = now.toISOString().split('T')[1].slice(0,8);
       
-      const line = document.createElement('div');
-      line.className = 'log-line';
+      div.className = 'log-entry ' + (Math.random() > 0.7 ? 'success' : 'info');
+      div.innerText = `[${time}] > ${msg}`;
       
-      // Choose color based on type
-      let colorClass = 'norm';
-      if(msg.type === 'sc') colorClass = 'sc';
-      if(msg.type === 'warn') colorClass = 'warn';
+      terminal.appendChild(div);
       
-      line.innerHTML = `<span class="ts">[${ts}]</span> <span class="${colorClass}">>> ${msg.text}</span>`;
-      
-      consoleBox.appendChild(line);
-      
-      // Auto scroll
-      if(consoleBox.children.length > 8) {
-        consoleBox.removeChild(consoleBox.children[0]);
+      // Keep only last 6 lines
+      if (terminal.children.length > 6) {
+        terminal.removeChild(terminal.children[0]);
       }
     }
 
-    // Initialize simulation
-    setInterval(addLog, 1500);
-    addLog(); addLog(); addLog();
+    // Add a log every 1.5 - 3 seconds
+    setInterval(addLog, 2000);
+    // Init with a few
+    addLog(); addLog();
   </script>
 </body>
 </html>
