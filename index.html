@@ -1,215 +1,378 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POKÉMON COMMAND CENTER // LIVE</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#050505;--card-bg:rgba(15,20,30,0.65);--glass-border:rgba(255,255,255,0.08);
-    --cyan:#00f0ff;--purple:#bf00ff;--gold:#ffcc00;--red:#ff3333;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:var(--bg);
-    background-image:radial-gradient(circle at 50% 0%,rgba(0,240,255,0.08),transparent 70%),
-      linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
-    background-size:100% 100%,30px 30px,30px 30px;
-    font-family:'Rajdhani',sans-serif;color:#fff;min-height:100vh;
-    display:flex;flex-direction:column;align-items:center;padding:40px 20px;
-  }
-  .header-unit{text-align:center;margin-bottom:50px;}
-  h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;letter-spacing:4px;text-transform:uppercase;
-    background:linear-gradient(180deg,#fff,#999);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    text-shadow:0 0 30px rgba(0,240,255,0.2);}
-  .status-pill{display:inline-flex;align-items:center;gap:12px;padding:8px 24px;background:rgba(0,240,255,0.05);
-    border:1px solid rgba(0,240,255,0.2);border-radius:4px;color:var(--cyan);font-weight:600;letter-spacing:3px;
-    font-size:0.9rem;box-shadow:0 0 20px rgba(0,240,255,0.1);}
-  .status-dot{width:8px;height:8px;background:var(--cyan);border-radius:50%;box-shadow:0 0 10px var(--cyan);animation:blink 2s infinite;}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DROP ALERT CENTER // ELITE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030303;
+      --card-bg: rgba(12, 12, 16, 0.7);
+      --border-dim: rgba(255, 255, 255, 0.08);
+      
+      /* NEON PALETTE */
+      --cyan: #00f0ff;
+      --purple: #bf00ff;
+      --gold: #ffcc00;
+      --green: #00ff41;
+      --red: #ff3333;
+      
+      --shadow-soft: 0 10px 40px rgba(0,0,0,0.6);
+    }
 
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:40px;width:100%;max-width:1200px;}
-  .holo-card{position:relative;background:var(--card-bg);border-radius:16px;backdrop-filter:blur(25px);
-    box-shadow:inset 0 0 0 1px var(--glass-border),0 20px 50px rgba(0,0,0,0.5);overflow:hidden;transition:transform .3s;}
-  .holo-card:hover{transform:translateY(-5px);}
-  .holo-card::after{content:'';position:absolute;inset:0;border-radius:16px;padding:2px;
-    background:conic-gradient(from var(--angle),transparent 40%,var(--border-color) 80%,transparent 100%);
-    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;
-    mask-composite:exclude;animation:spin 3s linear infinite;z-index:2;}
-  @property --angle{syntax:'<angle>';initial-value:0deg;inherits:false;}
-  @keyframes spin{to{--angle:360deg}}
-  .card-body{padding:30px;display:flex;flex-direction:column;height:100%;z-index:3;position:relative;}
-  .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;
-    border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:20px;}
-  .item-name{font-size:1.6rem;font-weight:700;line-height:1.1;color:#fff;}
-  .item-meta{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#888;margin-top:5px;}
-  .item-meta strong{color:var(--border-color);}
-  .confidence-ring{width:50px;height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    border-radius:50%;border:2px solid rgba(255,255,255,0.1);font-weight:700;font-size:1rem;background:rgba(0,0,0,0.3);}
-  .conf-label{font-size:0.5rem;opacity:0.7;margin-top:-2px;}
-  .static-intel{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.05);border-radius:6px;
-    padding:15px;margin-bottom:20px;height:100px;display:flex;flex-direction:column;justify-content:center;}
-  .intel-title{color:var(--border-color);font-weight:700;font-size:0.8rem;text-transform:uppercase;margin-bottom:5px;}
-  .intel-text{font-size:0.85rem;color:#ccc;line-height:1.4;}
-  .link-module{margin-top:auto;background:rgba(0,0,0,0.4);border:1px solid var(--border-color);border-radius:8px;
-    padding:15px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;transition:all .3s;cursor:pointer;}
-  .link-module:hover{background:var(--border-color);box-shadow:0 0 30px var(--btn-glow);}
-  .link-module:hover .link-title,.link-module:hover .link-sub{color:#000;}
-  .link-title{font-weight:700;font-size:1.1rem;color:#fff;text-transform:uppercase;}
-  .link-sub{font-family:'JetBrains Mono';font-size:0.65rem;color:var(--border-color);margin-top:2px;}
-  .link-icon{font-size:1.2rem;color:#fff;font-weight:bold;}
-  .theme-purple{--border-color:var(--purple);--btn-glow:rgba(191,0,255,0.5);}
-  .theme-gold{--border-color:var(--gold);--btn-glow:rgba(255,204,0,0.5);}
-  .theme-cyan{--border-color:var(--cyan);--btn-glow:rgba(0,240,255,0.5);}
-  .theme-red{--border-color:var(--red);--btn-glow:rgba(255,51,51,0.5);}
-</style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background-color: var(--bg);
+      /* Subtle mesh background */
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.05), transparent 70%);
+      background-size: 40px 40px, 40px 40px, 100% 100%;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 20px;
+    }
+
+    /* --- QUEUE MONITOR (TOP UNIT) --- */
+    .queue-unit {
+      width: 100%;
+      max-width: 1100px;
+      height: 140px;
+      margin-bottom: 40px;
+      position: relative;
+      background: var(--card-bg);
+      border-radius: 16px;
+      backdrop-filter: blur(25px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      border: 1px solid var(--border-dim);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    /* Top Border Light Flow */
+    .queue-unit::before {
+      content: ''; position: absolute; inset: 0; padding: 1px; border-radius: 16px;
+      background: linear-gradient(90deg, transparent 20%, var(--cyan), transparent 80%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: scan-horizontal 4s ease-in-out infinite;
+    }
+
+    .queue-left h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
+    }
+    
+    .queue-sub {
+      font-family: 'JetBrains Mono';
+      font-size: 0.8rem;
+      color: #777;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .live-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); }
+
+    .queue-center {
+      text-align: center;
+    }
+    .server-time-label { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+    .server-time-val {
+      font-family: 'JetBrains Mono';
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: var(--cyan);
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .queue-right {
+      text-align: right;
+    }
+    .risk-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--green); /* Dynamic color via JS */
+      line-height: 1;
+    }
+    .risk-label { font-size: 0.75rem; color: #666; letter-spacing: 1px; margin-top: 5px; }
+
+
+    /* --- DROPS GRID (BOTTOM) --- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 30px;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-dim);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s;
+      overflow: hidden;
+    }
+    .card:hover { transform: translateY(-5px); }
+
+    /* Neon Flow Border for Cards */
+    .card::after {
+      content: ''; position: absolute; inset: 0; padding: 2px; border-radius: 16px;
+      background: conic-gradient(from var(--a), transparent 50%, var(--border-color));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: spin 4s linear infinite;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .card-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 25px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 20px;
+    }
+
+    .title-group h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.6rem; font-weight: 700; line-height: 1.1; margin-bottom: 8px;
+    }
+    .sku { font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #666; }
+
+    .prob-badge {
+      font-family: 'Rajdhani'; font-weight: 700; font-size: 1.2rem;
+      color: var(--border-color);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px; border-radius: 6px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    /* Clean Info Rows (Replacing Terminal) */
+    .info-row {
+      display: flex; justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+    .info-label { color: #777; }
+    .info-val { font-weight: 600; color: #ddd; }
+
+    /* Buttons */
+    .btn {
+      margin-top: 25px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-dim);
+      color: #fff;
+      padding: 14px;
+      text-align: center;
+      text-transform: uppercase;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: 0.3s;
+      z-index: 2;
+    }
+    .btn:hover {
+      background: var(--border-color);
+      color: #000;
+      box-shadow: 0 0 25px var(--border-color);
+      border-color: transparent;
+    }
+
+    /* Themes */
+    .theme-purple { --border-color: var(--purple); }
+    .theme-gold { --border-color: var(--gold); }
+    .theme-cyan { --border-color: var(--cyan); }
+
+    /* Animations */
+    @property --a { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+    @keyframes spin { to { --a: 360deg; } }
+    @keyframes scan-horizontal { 0% { background-position: -100% 0; } 100% { background-position: 200% 0; } }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .queue-unit { flex-direction: column; height: auto; padding: 30px 20px; gap: 20px; text-align: center; }
+      .queue-left, .queue-right, .queue-center { text-align: center; }
+      .queue-sub { justify-content: center; }
+    }
+
+  </style>
 </head>
 <body>
 
-<div class="header-unit">
-  <h1>COMMAND CENTER</h1>
-  <div class="status-pill"><div class="status-dot"></div>PACIFIC TIME <span id="clock">--:--:--</span></div>
-</div>
-
-<div class="grid">
-
-  <!-- LIVE QUEUE (TRIPLE-CHECKED) -->
-  <div class="holo-card theme-cyan" id="queueCard">
-    <div class="card-body">
-      <div class="card-header"><div><div class="item-name">QUEUE STATUS</div><div class="item-meta">US • CA • UK</div></div>
-        <div class="confidence-ring" style="color:var(--cyan);border-color:var(--cyan)">—</div></div>
-      <div class="static-intel"><div class="intel-title">TRIPLE VERIFIED SCAN</div>
-        <div class="intel-text">Queue-it + Virtual Queue + Waiting Room keywords<br>Checked every 8 seconds</div></div>
-      <a href="https://www.pokemoncenter.com" target="_blank" class="link-module">
-        <div class="link-info"><div class="link-title">OPEN SITE</div><div class="link-sub">POKEMONCENTER.COM</div></div>
-        <div class="link-icon">Right Arrow</div>
-      </a>
+  <section class="queue-unit">
+    <div class="queue-left">
+      <h1>Queue Monitor</h1>
+      <div class="queue-sub"><div class="live-dot"></div> US SERVER • HTTPS</div>
     </div>
-  </div>
-
-  <!-- LIVE X FEED -->
-  <div class="holo-card theme-purple">
-    <div class="card-body">
-      <div class="card-header"><div><div class="item-name">LIVE X FEED</div><div class="item-meta">Last hour</div></div>
-        <div class="confidence-ring" style="color:var(--purple);border-color:var(--purple)">LIVE</div></div>
-      <div class="static-intel" style="height:auto;max-height:220px;overflow-y:auto;" id="xFeed">Loading real-time posts...</div>
-      <div class="link-module" onclick="window.open('https://x.com/search?q=pokemon%20center%20(queue%20OR%20drop%20OR%20restock)&f=live','_blank')">
-        <div class="link-info"><div class="link-title">FULL X SEARCH</div><div class="link-sub">REAL-TIME</div></div>
-        <div class="link-icon">Right Arrow</div>
-      </div>
+    
+    <div class="queue-center">
+      <div class="server-time-label">PACIFIC TIME</div>
+      <div class="server-time-val" id="serverClock">--:--:--</div>
     </div>
-  </div>
 
-  <!-- ALL DROPS + WEBSITES -->
-  <div class="holo-card theme-gold">
-    <div class="card-body">
-      <div class="card-header"><div><div class="item-name">ALL CONFIRMED DROPS</div><div class="item-meta">Dec 2025–Jan 2026</div></div>
-        <div class="confidence-ring" style="color:var(--gold);border-color:var(--gold)">99%</div></div>
-      <div class="static-intel" style="height:auto;">
-        <div class="intel-title">SCHEDULE + WEBSITE</div>
-        <div class="intel-text" style="font-size:0.88rem;line-height:1.6;">
-          <strong>Dec 5 • 10AM PT (100%)</strong><br>Mega Kangaskhan ex Box • Mega Venusaur PC • Holiday Calendar 2025<br><strong>→ pokemoncenter.com (US/CA)</strong><br><br>
-          <strong>Dec 10 • 9AM GMT (90%)</strong><br>Eevee Collection Merch<br><strong>→ pokemoncenter.com/en-gb (UK)</strong><br><br>
-          <strong>Dec 12 (75%)</strong><br>Battle Partners SV9a Restock<br><strong>→ pokemoncenter-online.com (JP)</strong><br><br>
-          <strong>Late Dec (80%)</strong><br>Mega Evolution: Ascended Heroes Preorders<br><strong>→ pokemoncenter.com (US/CA)</strong><br><br>
-          <strong>Jan 17, 2026 (80%)</strong><br>Prismatic Evolutions Restock<br><strong>→ pokemoncenter.com (US/CA)</strong>
+    <div class="queue-right">
+      <div class="risk-val" id="queueRisk">NORMAL</div>
+      <div class="risk-label">CURRENT QUEUE RISK</div>
+    </div>
+  </section>
+
+  <section class="grid">
+
+    <div class="card theme-purple">
+      <div class="card-header">
+        <div class="title-group">
+          <h2>Mega Venusaur PC</h2>
+          <div class="sku">SKU: 290-85472</div>
         </div>
+        <div class="prob-badge">98%</div>
       </div>
-      <a href="https://www.pokemoncenter.com/new-releases" target="_blank" class="link-module">
-        <div class="link-info"><div class="link-title">NEW RELEASES</div><div class="link-sub">POKEMONCENTER.COM</div></div>
-        <div class="link-icon">Right Arrow</div>
+
+      <div class="info-row">
+        <span class="info-label">Status</span>
+        <span class="info-val" id="status-v">Standing By</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Drop Time</span>
+        <span class="info-val">10:00 AM PT</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Type</span>
+        <span class="info-val">Premium Collection</span>
+      </div>
+
+      <a href="https://www.pokemoncenter.com/search/venusaur?sort=newest" target="_blank" class="btn">
+        Direct Link
       </a>
     </div>
-  </div>
 
-</div>
+    <div class="card theme-gold">
+      <div class="card-header">
+        <div class="title-group">
+          <h2>Kangaskhan ex</h2>
+          <div class="sku">SKU: 699-11204</div>
+        </div>
+        <div class="prob-badge">100%</div>
+      </div>
 
-<!-- ALARM BELL TOGGLE (TOP RIGHT) -->
-<div style="position:fixed;top:20px;right:20px;z-index:999;">
-  <button id="alarmBtn" style="background:rgba(0,0,0,0.5);border:2px solid #00f0ff;padding:12px 20px;border-radius:50px;
-    color:#00f0ff;font-family:'Orbitron';font-size:1.1rem;cursor:pointer;box-shadow:0 0 30px rgba(0,240,255,0.4);">
-    Bell ALARM ON
-  </button>
-</div>
+      <div class="info-row">
+        <span class="info-label">Status</span>
+        <span class="info-val" id="status-k">Standing By</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Drop Time</span>
+        <span class="info-val">10:00 AM PT</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Type</span>
+        <span class="info-val">Standard Box</span>
+      </div>
 
-<script>
-  const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
-  let queueLive = false;
-  let alarmOn = true;
+      <a href="https://www.pokemoncenter.com/search/kangaskhan?sort=newest" target="_blank" class="btn">
+        Direct Link
+      </a>
+    </div>
 
-  document.getElementById('alarmBtn').onclick = () => {
-    alarmOn = !alarmOn;
-    document.getElementById('alarmBtn').textContent = alarmOn ? 'Bell ALARM ON' : 'Bell ALARM OFF';
-    document.getElementById('alarmBtn').style.color = alarmOn ? '#00f0ff' : '#666';
-  };
+    <div class="card theme-cyan">
+      <div class="card-header">
+        <div class="title-group">
+          <h2>Ascended Heroes</h2>
+          <div class="sku">SET: SV-09</div>
+        </div>
+        <div class="prob-badge">SET</div>
+      </div>
 
-  // Clock
-  setInterval(() => {
-    const time = new Date().toLocaleTimeString('en-US', {timeZone:'America/Los_Angeles',hour12:false});
-    document.getElementById('clock').textContent = time;
-  }, 1000);
+      <div class="info-row">
+        <span class="info-label">Status</span>
+        <span class="info-val">Monitoring</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Drop Time</span>
+        <span class="info-val">Jan 30, 2026</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Type</span>
+        <span class="info-val">Main Expansion</span>
+      </div>
 
-  // TRIPLE-CHECKED QUEUE DETECTION
-  async function checkQueue() {
-    const urls = ['https://www.pokemoncenter.com/','https://www.pokemoncenter.com/en-ca/','https://www.pokemoncenter.com/en-gb/'];
-    let hits = 0;
-    for (let url of urls) {
-      try {
-        const html = await (await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`)).text();
-        const lowered = html.toLowerCase();
-        if (lowered.includes('queueit') || lowered.includes('virtual queue') || lowered.includes('waiting room')) hits++;
-      } catch(e) {}
+      <a href="https://www.pokemoncenter.com/new-releases" target="_blank" class="btn">
+        New Releases
+      </a>
+    </div>
+
+  </section>
+
+  <script>
+    function updateSystem() {
+      // 1. Clock Logic (Pacific Time)
+      const now = new Date();
+      const ptTime = new Date(now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+      const timeStr = ptTime.toLocaleTimeString('en-US', { hour12: false });
+      document.getElementById('serverClock').innerText = timeStr;
+
+      // 2. Risk Logic
+      const h = ptTime.getHours();
+      const m = ptTime.getMinutes();
+      const riskEl = document.getElementById('queueRisk');
+      const statusV = document.getElementById('status-v');
+      const statusK = document.getElementById('status-k');
+
+      // Logic: 9:50 AM - 10:10 AM is the Danger Zone
+      if ((h === 9 && m >= 50) || (h === 10 && m <= 10)) {
+        riskEl.innerText = "CRITICAL";
+        riskEl.style.color = "var(--red)";
+        riskEl.style.textShadow = "0 0 20px var(--red)";
+        
+        statusV.innerText = "DROP IMMINENT";
+        statusV.style.color = "var(--gold)";
+        statusK.innerText = "DROP IMMINENT";
+        statusK.style.color = "var(--gold)";
+        
+      } else if (h === 10) {
+        riskEl.innerText = "ACTIVE";
+        riskEl.style.color = "var(--cyan)";
+        
+        statusV.innerText = "LIVE WINDOW";
+        statusV.style.color = "var(--green)";
+        statusK.innerText = "LIVE WINDOW";
+        statusK.style.color = "var(--green)";
+        
+      } else {
+        riskEl.innerText = "NORMAL";
+        riskEl.style.color = "var(--green)";
+        riskEl.style.textShadow = "0 0 20px var(--green)";
+        
+        statusV.innerText = "Standing By";
+        statusV.style.color = "#ddd";
+        statusK.innerText = "Standing By";
+        statusK.style.color = "#ddd";
+      }
     }
-    return hits >= 2; // Only trigger if at least 2 sites show queue (eliminates false positives)
-  }
 
-  async function updateXFeed() {
-    try {
-      const resp = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(
-        'https://rsshub.app/twitter/search/pokemon%20center%20(queue%20OR%20drop%20OR%20restock%20OR%20live)'
-      ));
-      const data = await resp.json();
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(data.contents,'text/xml');
-      const items = Array.from(xml.querySelectorAll('item')).slice(0,6);
-      document.getElementById('xFeed').innerHTML = items.map(i=>{
-        const title = i.querySelector('title').textContent;
-        const age = Math.round((Date.now() - new Date(i.querySelector('pubDate').textContent))/60000);
-        return `<div style="margin:10px 0;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;">
-          ${title}<br><small style="opacity:0.7;">${age} min ago</small>
-        </div>`;
-      }).join('') || '<div style="opacity:0.6;">No recent activity</div>';
-    } catch(e) {
-      document.getElementById('xFeed').innerHTML = '<div style="opacity:0.6;">Feed temporarily down</div>';
-    }
-  }
+    setInterval(updateSystem, 1000);
+    updateSystem();
+  </script>
 
-  async function scan() {
-    const live = await checkQueue();
-    const card = document.getElementById('queueCard');
-    const title = card.querySelector('.item-name');
-    const intel = card.querySelector('.intel-text');
-
-    if (live && !queueLive) {
-      queueLive = true;
-      title.textContent = 'QUEUE LIVE';
-      intel.textContent = 'TRIPLE CONFIRMED — DROP IS LIVE!';
-      card.className = 'holo-card theme-red';
-      if (alarmOn) sound.play();
-      if (Notification.permission==='granted') new Notification('QUEUE LIVE!',{body:'Pokémon Center drop confirmed!'});
-    } else if (!live && queueLive) {
-      queueLive = false;
-      title.textContent = 'QUEUE STATUS';
-      intel.textContent = 'No queue — site open';
-      card.className = 'holo-card theme-cyan';
-    }
-    updateXFeed();
-  }
-
-  scan();
-  setInterval(scan, 8000); // Every 8 seconds — maximum reliability
-</script>
 </body>
 </html>
