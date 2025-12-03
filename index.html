@@ -11,6 +11,7 @@
       --tron-dark: #0b1a2b;
       --tron-glow: 0 0 20px #00f0ff;
       --tron-glow-intense: 0 0 40px #00f0ff, 0 0 80px #00f0ff;
+      --alert-red: #ff0066;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
@@ -69,9 +70,9 @@
     .live-dot {
       display: inline-block;
       width: 14px; height: 14px;
-      background: #ff0066;
+      background: var(--alert-red);
       border-radius: 50%;
-      box-shadow: 0 0 20px #ff0066;
+      box-shadow: 0 0 20px var(--alert-red);
       animation: pulseDot 1.5s infinite;
       margin-right: 10px;
     }
@@ -119,14 +120,14 @@
       overflow: hidden;
     }
     .tweet.fresh {
-      border: 2px solid #ff0066 !important;
-      box-shadow: 0 0 40px #ff0066 !important;
+      border: 2px solid var(--alert-red) !important;
+      box-shadow: 0 0 40px var(--alert-red) !important;
       animation: freshPulse 2s infinite;
       transform: scale(1.03);
     }
     @keyframes freshPulse {
-      0%,100% { box-shadow: 0 0 40px #ff0066; }
-      50% { box-shadow: 0 0 80px #ff0066; }
+      0%,100% { box-shadow: 0 0 40px var(--alert-red); }
+      50% { box-shadow: 0 0 80px var(--alert-red); }
     }
     .tweet-header {
       display: flex;
@@ -165,18 +166,52 @@
     }
     .tweet-link:hover { text-shadow: var(--tron-glow); }
 
+    .last-drop {
+      background: rgba(255,0,102,0.2);
+      border: 1px solid var(--alert-red);
+      text-align: center;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      font-size: 1.1rem;
+    }
+    .last-drop .time-ago {
+      font-weight: bold;
+      color: var(--alert-red);
+      text-shadow: 0 0 10px var(--alert-red);
+    }
+
+    .info-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .info-card {
+      background: rgba(0,15,40,0.5);
+      border: 1px solid var(--tron-blue);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+    }
+    .info-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      margin-bottom: 10px;
+      text-shadow: var(--tron-glow);
+    }
+
     .sound-btn {
       position: fixed;
       bottom: 30px;
       right: 30px;
       width: 70px;
       height: 70px;
-      background: #ff0066;
+      background: var(--alert-red);
       border-radius: 50%;
       border: none;
       font-size: 36px;
       color: white;
-      box-shadow: 0 0 40px #ff0066;
+      box-shadow: 0 0 40px var(--alert-red);
       cursor: pointer;
       z-index: 999;
       animation: float 4s infinite ease-in-out;
@@ -208,7 +243,18 @@
 
   <div class="container">
     <div class="card">
+      <h2 style="text-align:center; margin-bottom:20px; font-family:Orbitron;">📊 WAR ROOM DASHBOARD</h2>
+      <div class="info-panel" id="info-panel">
+        <!-- Dynamic info will load here -->
+      </div>
+    </div>
+
+    <div class="card">
       <h2 style="text-align:center; margin-bottom:20px; font-family:Orbitron;">🔥 LATEST DROP INTEL (under 6 minutes = RED ALERT)</h2>
+      <div class="last-drop" id="last-drop-info" style="display:none;">
+        <strong>🕐 LAST DROP DETECTED:</strong> <span id="last-drop-time" class="time-ago"></span><br>
+        <small id="last-drop-details"></small>
+      </div>
       <div class="tweets-grid" id="results">Loading the grid…</div>
     </div>
   </div>
@@ -225,29 +271,64 @@
       "pokemon center drop", "pokémon center drop", "pokemoncenter drop", "pc drop",
       "pokemoncenter live", "just went live", "queue live", "pokemon center queue",
       "restock live", "LIVE pokemoncenter", "in stock pokemoncenter", "drop incoming",
-      "shrouded fable", "charizard ex", "crown zenith", "surging sparks"
+      "shrouded fable", "charizard ex", "crown zenith", "surging sparks", "combined powers", "prismatic etb",
+      "destined rivals", "fall 2025 collector chest"
     ];
 
     let soundEnabled = true;
     const alertSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3");
+    let lastDropTime = null; // Track last drop timestamp
 
     document.getElementById("soundToggle").addEventListener("click", () => {
       soundEnabled = !soundEnabled;
       document.getElementById("soundToggle").textContent = soundEnabled ? "🔊" : "🔇";
     });
 
+    function updateLastDropDisplay() {
+      const lastDropEl = document.getElementById("last-drop-info");
+      const timeEl = document.getElementById("last-drop-time");
+      const detailsEl = document.getElementById("last-drop-details");
+      if (lastDropTime) {
+        const now = Date.now();
+        const diffMin = Math.round((now - lastDropTime) / 60000);
+        lastDropEl.style.display = "block";
+        timeEl.textContent = diffMin === 1 ? "1 minute ago" : `${diffMin} minutes ago`;
+        detailsEl.textContent = "Queue live – Check pokemoncenter.com NOW!";
+      } else {
+        lastDropEl.style.display = "none";
+      }
+    }
+
+    function updateInfoPanel() {
+      const panel = document.getElementById("info-panel");
+      panel.innerHTML = `
+        <div class="info-card">
+          <h3>🛡️ UPCOMING DROPS</h3>
+          <p>Fall 2025 Collector Chest – Dec 5<br>Phantasmal Flames – Nov 14 (Restock?)</p>
+        </div>
+        <div class="info-card">
+          <h3>📈 TRENDS</h3>
+          <p>Tuesdays 10AM PT: 70% drops<br>Queue spikes = 99% signal</p>
+        </div>
+        <div class="info-card">
+          <h3>🔗 QUICK LINKS</h3>
+          <p><a href="https://www.pokemoncenter.com/" style="color:var(--tron-blue);">Shop Now</a><br><a href="https://discord.gg/trackalacker" style="color:var(--tron-blue);">Join Discord</a></p>
+        </div>
+      `;
+    }
+
     async function fetchIntel() {
       const container = document.getElementById("results");
       document.getElementById("last-update").textContent = new Date().toLocaleTimeString();
 
       try {
-        const proxy = "https://api.allorigins.ml/get?url=" + encodeURIComponent(
+        const proxyUrl = "https://api.allorigins.ml/get?url=" + encodeURIComponent(
           "https://api.twitter.com/2/tweets/search/recent?query=" +
           encodeURIComponent(keywords.map(k => `"${k}"`).join(" OR ") + " -is:retweet lang:en") +
           "&tweet.fields=created_at,author_id&expansions=author_id&user.fields=username,name,profile_image_url&max_results=100"
         );
 
-        const resp = await fetch(proxy);
+        const resp = await fetch(proxyUrl);
         const data = await resp.json();
         const tweets = JSON.parse(data.contents);
 
@@ -260,12 +341,17 @@
         tweets.includes?.users?.forEach(u => users[u.id] = u);
 
         const now = Date.now();
+        let hasFreshDrop = false;
         container.innerHTML = tweets.data
           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .map(tweet => {
             const user = users[tweet.author_id] || {};
             const ageMin = Math.round((now - new Date(tweet.created_at)) / 60000);
-            const isFresh = ageMin <= 5;
+            const isFresh = ageMin <= 6; // Updated to 6 min
+            if (isFresh && tweet.text.toLowerCase().includes('queue') && !hasFreshDrop) {
+              lastDropTime = new Date(tweet.created_at).getTime();
+              hasFreshDrop = true;
+            }
             if (isFresh && soundEnabled) {
               alertSound.currentTime = 0;
               alertSound.play();
@@ -287,14 +373,23 @@
               </div>`;
           }).join("");
 
+        if (hasFreshDrop) {
+          updateLastDropDisplay();
+        }
+
       } catch (e) {
-        container.innerHTML = "<p style='text-align:center;grid-column:1/-1;color:#ff0066;'>GRID OFFLINE • Reconnecting…</p>";
+        container.innerHTML = "<p style='text-align:center;grid-column:1/-1;color:var(--alert-red);'>GRID OFFLINE • Reconnecting…</p>";
       }
     }
 
-    // Activate the War Room
+    // Initialize
+    updateInfoPanel();
+    updateLastDropDisplay();
     fetchIntel();
-    setInterval(fetchIntel, 15000); // Every 15 seconds = beast mode
+    setInterval(() => {
+      fetchIntel();
+      updateLastDropDisplay();
+    }, 15000); // Every 15 seconds
   </script>
 </body>
 </html>
