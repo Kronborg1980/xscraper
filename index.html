@@ -1,426 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NEXUS MONITOR // PREMIUM</title>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-deep: #030304;
-      --glass-surface: rgba(20, 20, 25, 0.6);
-      --glass-highlight: rgba(255, 255, 255, 0.03);
-      --border-light: rgba(255, 255, 255, 0.08);
-      
-      /* Neon Palette */
-      --cyan: #00f3ff;
-      --purple: #bc13fe;
-      --pink: #ff0055;
-      --green: #00ff9d;
-      --gold: #ffd700;
-      
-      --text-main: #ffffff;
-      --text-muted: #8a8a9b;
-      
-      --anim-speed: 4s;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POKÉMON COMMAND CENTER</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d1117;
+    --glass:rgba(30,45,90,0.5);
+    --border:rgba(0,255,255,0.4);
+    --cyan:#00ffff;
+    --pink:#ff00aa;
+    --text:#e0ffff;
+    --dim:#88c8e8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background:radial-gradient(circle at 50% 0%,rgba(0,255,255,0.08),transparent 70%),
+               radial-gradient(circle at 20% 80%,rgba(255,0,170,0.08),transparent 70%);
+  }
+  header{text-align:center;padding:40px 20px;}
+  h1{
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(2.5rem,9vw,5rem);
+    letter-spacing:0.3em;
+    background:linear-gradient(90deg,var(--cyan),var(--pink));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .subtitle{font-size:1rem;opacity:0.7;margin-top:8px;letter-spacing:0.15em;}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* Tiny queue status top-right */
+  #queue{
+    position:fixed;top:20px;right:20px;
+    display:flex;align-items:center;gap:12px;
+    background:var(--glass);border:1px solid var(--border);
+    border-radius:40px;padding:10px 20px;
+    backdrop-filter:blur(20px);
+    font-family:'Orbitron',sans-serif;font-size:1.2rem;
+    z-index:999;transition:all 0.5s;
+  }
+  #queue.live{
+    background:rgba(255,0,170,0.25);
+    border-color:var(--pink);
+    box-shadow:0 0 30px rgba(255,0,170,0.4);
+  }
+  #queueIcon{font-size:1.8rem;}
 
-    body {
-      background-color: var(--bg-deep);
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(188, 19, 254, 0.15), transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(0, 243, 255, 0.15), transparent 40%);
-      font-family: 'Inter', sans-serif;
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
-      overflow-x: hidden;
-    }
+  .container{
+    max-width:1100px;margin:0 auto;padding:20px;
+    display:grid;grid-template-columns:1fr 1fr;gap:30px;
+  }
+  @media(max-width:900px){.container{grid-template-columns:1fr;}}
 
-    /* Ambient Mesh Grid */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-      z-index: -1;
-      mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
-    }
+  .card{
+    background:var(--glass);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:32px;
+    backdrop-filter:blur(20px);
+    box-shadow:0 15px 40px rgba(0,0,0,0.5);
+  }
+  .card h2{
+    font-family:'Orbitron',sans-serif;
+    font-size:1.6rem;margin-bottom:16px;
+    color:var(--cyan);
+  }
+  .intel-item{
+    background:rgba(0,0,0,0.3);
+    padding:16px;border-radius:14px;
+    margin:10px 0;
+    border-left:4px solid var(--border);
+  }
+  .intel-item.fresh{
+    border-left-color:var(--pink);
+    background:rgba(255,0,170,0.08);
+    box-shadow:0 0 20px rgba(255,0,170,0.15);
+  }
 
-    .container {
-      width: 100%;
-      max-width: 1000px;
-      position: relative;
-    }
-
-    /* --- HEADER --- */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 50px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border-light);
-    }
-    
-    .brand {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    h1 {
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 700;
-      font-size: 2.5rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      background: linear-gradient(90deg, #fff, #aaa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    
-    .subtitle {
-      color: var(--cyan);
-      font-size: 0.8rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .subtitle::before {
-      content:''; display:block; width:6px; height:6px; background:var(--cyan); border-radius:50%;
-      box-shadow: 0 0 10px var(--cyan);
-      animation: pulse 2s infinite;
-    }
-
-    .status-panel {
-      text-align: right;
-    }
-    .sys-stat {
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 600;
-      color: var(--green);
-      font-size: 1.1rem;
-    }
-    .sys-sub { font-size: 0.75rem; color: var(--text-muted); }
-
-    /* --- GLASS CARDS --- */
-    .glass-card {
-      background: var(--glass-surface);
-      border-radius: 16px;
-      backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
-      border: 1px solid var(--border-light);
-      padding: 1px; /* Space for the border animation */
-      position: relative;
-      margin-bottom: 30px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      overflow: hidden;
-    }
-
-    /* The Flowing LED Border */
-    .led-flow {
-      position: absolute;
-      inset: -50%;
-      width: 200%; height: 200%;
-      background: conic-gradient(
-        from 0deg, 
-        transparent 0%, 
-        transparent 80%, 
-        var(--cyan) 90%, 
-        transparent 100%
-      );
-      animation: rotateBorder var(--anim-speed) linear infinite;
-      z-index: 0;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    
-    .glass-card:hover .led-flow { opacity: 1; }
-    
-    /* Variant Colors for LED */
-    .led-flow.purple { background: conic-gradient(from 0deg, transparent 0%, transparent 80%, var(--purple) 90%, transparent 100%); }
-    .led-flow.gold { background: conic-gradient(from 0deg, transparent 0%, transparent 80%, var(--gold) 90%, transparent 100%); }
-
-    /* Inner Card Surface (sits on top of LED) */
-    .card-inner {
-      background: rgba(10, 10, 12, 0.9);
-      border-radius: 15px;
-      padding: 30px;
-      position: relative;
-      z-index: 1;
-      height: 100%;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 25px;
-    }
-    
-    .item-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 5px;
-    }
-    
-    .item-meta {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-family: 'Inter', monospace;
-    }
-
-    /* PROBABILITY METRICS */
-    .prob-badge {
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 700;
-      font-size: 2rem;
-      line-height: 1;
-      text-align: right;
-    }
-    .prob-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      display: block;
-      margin-top: 5px;
-      opacity: 0.7;
-    }
-
-    .bar-track {
-      width: 100%;
-      height: 4px;
-      background: rgba(255,255,255,0.1);
-      margin-top: 20px;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    
-    .bar-fill {
-      height: 100%;
-      border-radius: 2px;
-      box-shadow: 0 0 15px currentColor;
-      width: 0%;
-      animation: loadBar 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    /* INFO GRID */
-    .intel-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-      margin-top: 25px;
-      border-top: 1px solid var(--border-light);
-      padding-top: 20px;
-    }
-    
-    .intel-point {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-    .intel-point strong {
-      display: block;
-      color: #fff;
-      font-size: 0.95rem;
-      margin-bottom: 4px;
-    }
-
-    /* BUTTONS */
-    .action-row {
-      margin-top: 25px;
-      display: flex;
-      gap: 15px;
-    }
-    
-    .btn {
-      flex: 1;
-      padding: 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border-light);
-      background: rgba(255,255,255,0.03);
-      color: #fff;
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 600;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      text-align: center;
-      display: flex; justify-content: center; align-items: center; gap: 8px;
-    }
-    
-    .btn:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: #fff;
-      transform: translateY(-2px);
-    }
-    
-    .btn.primary {
-      background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(0, 243, 255, 0));
-      border-color: var(--cyan);
-      color: var(--cyan);
-    }
-    .btn.primary:hover {
-      box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
-    }
-
-    /* ANIMATIONS */
-    @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    @keyframes loadBar { from { width: 0; } }
-
-  </style>
+  .fab{
+    position:fixed;bottom:30px;right:30px;
+    display:flex;flex-direction:column;gap:16px;z-index:999;
+  }
+  .fab button{
+    width:60px;height:60px;
+    border-radius:50%;
+    background:var(--glass);
+    border:2px solid var(--border);
+    color:var(--text);
+    font-size:1.8rem;
+    cursor:pointer;
+    backdrop-filter:blur(15px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    transition:0.3s;
+  }
+  .fab button:hover{
+    transform:scale(1.2);
+    box-shadow:0 15px 40px rgba(0,255,255,0.4);
+  }
+  .fab .site{
+    background:linear-gradient(135deg,var(--cyan),var(--pink));
+    color:#000;font-weight:bold;
+  }
+</style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <div class="brand">
-        <h1>NEXUS // MONITOR</h1>
-        <div class="subtitle">Real-Time Drop Intelligence</div>
-      </div>
-      <div class="status-panel">
-        <div class="sys-stat">SYSTEM OPTIMAL</div>
-        <div class="sys-sub">Scanning PC-US Backend</div>
-      </div>
-    </header>
+<header>
+  <h1>COMMAND CENTER</h1>
+  <div class="subtitle">POKÉMON DROP MONITOR</div>
+</header>
 
-    <div class="glass-card">
-      <div class="led-flow purple"></div>
-      <div class="card-inner">
-        <div class="card-header">
-          <div>
-            <div class="item-title">Mega Venusaur Premium Collection</div>
-            <div class="item-meta">TARGET DATE: DEC 5, 2025 • FRIDAY</div>
-          </div>
-          <div class="prob-badge" style="color:var(--purple)">
-            98%
-            <span class="prob-label">CONFIDENCE</span>
-          </div>
-        </div>
+<div id="queue">
+  <span id="queueIcon">Green Circle</span>
+  <span id="queueLabel">NO QUEUE</span>
+</div>
 
-        <p style="color:#ccc; font-size:0.95rem; line-height:1.6;">
-          <strong>Status:</strong> Retailer Allocations Confirmed.<br>
-          While often confused with an ETB, this "Premium Collection" is the confirmed Venusaur product for December. It features the Mega Venusaur ex promo, 8 booster packs, and the tech sticker.
-        </p>
+<div class="container">
 
-        <div class="bar-track">
-          <div class="bar-fill" style="width: 98%; background: var(--purple);"></div>
-        </div>
-
-        <div class="intel-grid">
-          <div class="intel-point"><strong>Source</strong>Retailer API</div>
-          <div class="intel-point"><strong>Stock Level</strong>High</div>
-          <div class="intel-point"><strong>Type</strong>Premium Box</div>
-        </div>
-        
-        <div class="action-row">
-           <a href="https://www.pokemoncenter.com/search/venusaur" target="_blank" class="btn primary">
-             Monitor "Venusaur"
-           </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="glass-card">
-      <div class="led-flow gold"></div>
-      <div class="card-inner">
-        <div class="card-header">
-          <div>
-            <div class="item-title">Mega Kangaskhan ex Box</div>
-            <div class="item-meta">TARGET DATE: DEC 5, 2025 • FRIDAY</div>
-          </div>
-          <div class="prob-badge" style="color:var(--gold)">
-            100%
-            <span class="prob-label">CONFIDENCE</span>
-          </div>
-        </div>
-
-        <p style="color:#ccc; font-size:0.95rem; line-height:1.6;">
-          <strong>Status:</strong> Officially Announced.<br>
-          Standard release featuring the Mega Kangaskhan ex promo. Due to it being a regular "ex Box," stock will be plentiful, but it drops simultaneously with Venusaur.
-        </p>
-
-        <div class="bar-track">
-          <div class="bar-fill" style="width: 100%; background: var(--gold);"></div>
-        </div>
-
-        <div class="intel-grid">
-          <div class="intel-point"><strong>Source</strong>Official Blog</div>
-          <div class="intel-point"><strong>Price</strong>$21.99 MSRP</div>
-          <div class="intel-point"><strong>Type</strong>Promo Box</div>
-        </div>
-        
-        <div class="action-row">
-           <a href="https://www.pokemoncenter.com/search/kangaskhan" target="_blank" class="btn primary">
-             Monitor "Kangaskhan"
-           </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="glass-card">
-      <div class="led-flow"></div>
-      <div class="card-inner">
-        <div class="card-header">
-          <div>
-            <div class="item-title">Mega Evolution: Ascended Heroes</div>
-            <div class="item-meta">TARGET DATE: JAN 30, 2026</div>
-          </div>
-          <div class="prob-badge" style="color:var(--cyan)">
-            100%
-            <span class="prob-label">LOCKED</span>
-          </div>
-        </div>
-
-        <p style="color:#ccc; font-size:0.95rem; line-height:1.6;">
-          <strong>Status:</strong> Set Release.<br>
-          This is the major set release following the "Mega Evolution" block. This will include the actual Elite Trainer Boxes (ETBs) for the set. Pre-orders on Pokemon Center usually open 2-3 weeks prior (Early Jan).
-        </p>
-
-        <div class="bar-track">
-          <div class="bar-fill" style="width: 100%; background: var(--cyan);"></div>
-        </div>
-        
-         <div class="action-row">
-           <a href="https://www.pokemoncenter.com/new-releases" target="_blank" class="btn">
-             Check New Releases
-           </a>
-        </div>
-      </div>
-    </div>
-    
-    <div class="glass-card" style="opacity: 0.7;">
-      <div class="card-inner" style="background: rgba(10,10,12, 0.6);">
-        <div class="card-header">
-          <div>
-            <div class="item-title" style="color:#888;">Holiday Calendar 2025</div>
-            <div class="item-meta">RELEASED: AUG 22, 2025</div>
-          </div>
-          <div class="prob-badge" style="color:#888; font-size:1.5rem;">
-            LOW
-            <span class="prob-label">RESTOCK ODDS</span>
-          </div>
-        </div>
-        <p style="color:#666; font-size:0.9rem;">
-          This item released back in August. While "Holiday" items sometimes restock in December, no specific supply chain signals indicate a major wave is coming. 
-        </p>
-      </div>
-    </div>
-
+  <div class="card">
+    <h2>NEXT DROP</h2>
+    <p style="font-size:1.2rem;line-height:1.8;">
+      <strong>December 5 – 10:00 AM PT</strong><br>
+      Holiday Calendar 2025 • Mega Venusaur Premium Collection • Kangaskhan ex Box + heavy restocks
+    </p>
+    <p style="margin-top:16px;font-size:0.9rem;opacity:0.7;">
+      Source: PokeBeach / Serebii / PokemonRestocks
+    </p>
   </div>
 
+  <div class="card">
+    <h2>LIVE X FEED</h2>
+    <div id="feed">Loading latest signals...</div>
+  </div>
+
+</div>
+
+<div class="fab">
+  <button class="site" onclick="window.open('https://www.pokemoncenter.com','_blank')" title="Open Pokémon Center">GO</button>
+  <button onclick="location.reload()" title="Refresh">Refresh</button>
+  <button id="soundBtn" title="Toggle Sound">Sound</button>
+  <button onclick="Notification.requestPermission()" title="Notifications">Bell</button>
+</div>
+
+<script>
+  const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
+  let queueLive = false;
+  let soundOn = true;
+
+  document.getElementById('soundBtn').onclick = () => { soundOn = !soundOn; };
+
+  async function checkQueue() {
+    const urls = [
+      'https://www.pokemoncenter.com/',
+      'https://www.pokemoncenter.com/en-ca/',
+      'https://www.pokemoncenter.com/en-gb/'
+    ];
+    for (let url of urls) {
+      try {
+        const html = await (await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`)).text();
+        if (html.toLowerCase().includes('queueit') || html.includes('virtual queue') || html.includes('waiting room')) {
+          return true;
+        }
+      } catch(e) {}
+    }
+    return false;
+  }
+
+  async function updateFeed() {
+    try {
+      const resp = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(
+        'https://rsshub.app/twitter/search/pokemon%20center%20(queue%20OR%20drop%20OR%20restock%20OR%20live)'
+      ));
+      const data = await resp.json();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(data.contents,'text/xml');
+      const items = Array.from(xml.querySelectorAll('item')).slice(0,8);
+      document.getElementById('feed').innerHTML = items.map(i=>{
+        const title = i.querySelector('title').textContent;
+        const age = Math.round((Date.now() - new Date(i.querySelector('pubDate').textContent)) / 60000);
+        return `<div class="intel-item ${age<6?'fresh':''}">${title}<br><small>${age} min ago</small></div>`;
+      }).join('') || '<div style="opacity:0.6;">No recent signals</div>';
+    } catch(e) {
+      document.getElementById('feed').innerHTML = '<div style="opacity:0.6;">Feed temporarily unavailable</div>';
+    }
+  }
+
+  async function scan() {
+    const live = await checkQueue();
+    const q = document.getElementById('queue');
+    const icon = document.getElementById('queueIcon');
+    const label = document.getElementById('queueLabel');
+
+    if (live && !queueLive) {
+      queueLive = true;
+      icon.textContent = 'Red Circle';
+      label.textContent = 'QUEUE LIVE';
+      q.classList.add('live');
+      if (soundOn) sound.play();
+      if (Notification.permission === 'granted') new Notification('QUEUE LIVE!', {body: 'Pokémon Center queue detected!'});
+    } else if (!live && queueLive) {
+      queueLive = false;
+      icon.textContent = 'Green Circle';
+      label.textContent = 'NO QUEUE';
+      q.classList.remove('live');
+    }
+    updateFeed();
+  }
+
+  scan();
+  setInterval(scan, 10000); // every 10 seconds
+</script>
 </body>
 </html>
