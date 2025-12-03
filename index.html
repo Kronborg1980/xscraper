@@ -1,176 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POKÉMON COMMAND CENTER</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>POKÉMON COMMAND CENTER</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --glass-bg: rgba(20, 30, 45, 0.4);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-highlight: rgba(255, 255, 255, 0.2);
+      
+      --cyan: #00f3ff;
+      --magenta: #ff0055;
+      --purple: #bc13fe;
+      --green: #00ff9d;
+      --text: #e0ffff;
+      
+      --neon-flow-speed: 3s;
+    }
 
-  :root {
-    --bg: #0d1117;
-    --glass: rgba(30,45,90,0.5);
-    --border: rgba(0,255,255,0.4);
-    --cyan: #00ffff;
-    --pink: #ff00aa;
-    --text: #e0ffff;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:#0d1117;
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    background:radial-gradient(circle at 50% 0%,rgba(0,255,255,0.08),transparent 70%),
-               radial-gradient(circle at 20% 80%,rgba(255,0,170,0.08),transparent 70%);
-  }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
-  header{
-    text-align:center;
-    padding:40px 20px;
-  }
-  h1{
-    font-family:'Orbitron',sans-serif;
-    font-size:clamp(2.5rem,9vw,5rem);
-    letter-spacing:0.3em;
-    background:linear-gradient(90deg,#00ffff,#ff00aa);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-  }
+    body {
+      background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.15), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.15), transparent 25%);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-  /* Tiny, elegant queue status in the top-right corner */
-  #queue{
-    position:fixed;
-    top:20px;
-    right:20px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    background:var(--glass);
-    border:1px solid var(--border);
-    border-radius:40px;
-    padding:10px 20px;
-    backdrop-filter:blur(20px);
-    font-family:'Orbitron',sans-serif;
-    font-size:1.2rem;
-    z-index:999;
-    transition:all 0.5s;
-  }
-  #queue.live{background:rgba(255,0,170,0.25);border-color:#ff00aa;box-shadow:0 0 30px rgba(255,0,170,0.4);}
-  #queueIcon{font-size:1.8rem;}
+    /* CRT Scanline Overlay */
+    body::after {
+      content: " ";
+      display: block;
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 2;
+      background-size: 100% 2px, 3px 100%;
+      pointer-events: none;
+    }
 
-  .container{
-    max-width:1100px;
-    margin:0 auto;
-    padding:20px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:30px;
-  }
-  @media(max-width:900px){.container{grid-template-columns:1fr;}}
+    header {
+      text-align: center;
+      padding: 60px 20px 20px;
+      position: relative;
+      z-index: 10;
+    }
 
-  .card{
-    background:var(--glass);
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:32px;
-    backdrop-filter:blur(20px);
-    box-shadow:0 15px 40px rgba(0,0,0,0.5);
-  }
-  .card h2{
-    font-family:'Orbitron',sans-serif;
-    font-size:1.6rem;
-    margin-bottom:16px;
-    color:var(--cyan);
-  }
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.5rem, 8vw, 6rem);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #fff, var(--dim));
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px var(--cyan);
+      position: relative;
+    }
+    
+    /* Glitch effect on hover for title */
+    h1::before, h1::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.8;
+      display: none;
+    }
 
-  /* FABs – icons only, beautiful */
-  .fab{
-    position:fixed;
-    bottom:30px;
-    right:30px;
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-    z-index:999;
-  }
-  .fab button{
-    width:60px;height:60px;
-    border-radius:50%;
-    background:var(--glass);
-    border:2px solid var(--border);
-    color:var(--text);
-    font-size:1.8rem;
-    cursor:pointer;
-    backdrop-filter:blur(15px);
-    box-shadow:0 10px 30px rgba(0,0,0,0.6);
-    transition:0.3s;
-  }
-  .fab button:hover{
-    transform:scale(1.2);
-    box-shadow:0 15px 40px rgba(0,255,255,0.4);
-  }
-  .fab .site{
-    background:linear-gradient(135deg,var(--cyan),var(--pink));
-    color:#000;
-    font-weight:bold;
-  }
-</style>
+    /* The Moving LED Border Container */
+    .led-border {
+      position: relative;
+      background: var(--glass-bg);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      /* The static border */
+      box-shadow: 
+        inset 0 0 0 1px var(--glass-border),
+        0 20px 50px rgba(0,0,0,0.5);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* The "Running Light" Pseudo-element */
+    .led-border::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 20px;
+      padding: 2px; /* Thickness of the LED border */
+      width: 100%;
+      background: linear-gradient(90deg, transparent 50%, var(--cyan), var(--purple), var(--magenta), transparent 90%);
+      background-size: 300% 300%;
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: borderFlow var(--neon-flow-speed) linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes borderFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .led-border:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        inset 0 0 0 1px var(--glass-highlight),
+        0 0 30px rgba(0, 243, 255, 0.2);
+    }
+
+    /* Queue Status Pill */
+    .queue-pill {
+      position: fixed;
+      top: 130px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 30px;
+      border-radius: 50px;
+      z-index: 100;
+      width: max-content;
+    }
+    
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 15px var(--green);
+      transition: all 0.3s ease;
+    }
+    
+    .status-indicator.alert {
+      background: var(--magenta);
+      box-shadow: 0 0 20px var(--magenta), 0 0 40px var(--magenta);
+      animation: blink 0.5s infinite alternate;
+    }
+
+    .queue-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(0,255,255,0.5);
+    }
+
+    @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
+
+    /* Dashboard Layout */
+    .dashboard {
+      max-width: 1200px;
+      width: 100%;
+      margin: 180px auto 100px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 40px;
+      padding: 0 20px;
+      z-index: 5;
+    }
+
+    .card-content {
+      padding: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-transform: uppercase;
+    }
+
+    .card h2 svg { width: 24px; height: 24px; }
+
+    /* Intel List Styling */
+    .intel-list { display: flex; flex-direction: column; gap: 15px; }
+    
+    .intel-item {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 3px solid var(--glass-border);
+      font-size: 0.95rem;
+      transition: all 0.3s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .intel-item span.time { font-size: 0.75rem; color: #888; font-family: 'Orbitron', monospace; }
+
+    .intel-item.fresh {
+      border-left-color: var(--magenta);
+      background: linear-gradient(90deg, rgba(255, 0, 85, 0.1), transparent);
+      box-shadow: 0 0 15px rgba(255,0,85,0.1);
+    }
+
+    /* Floating Action Buttons */
+    .fab-container {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 200;
+    }
+
+    .fab-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(20, 20, 30, 0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--cyan);
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+
+    .fab-btn svg { width: 24px; height: 24px; stroke-width: 2; }
+
+    .fab-btn:hover {
+      transform: scale(1.15);
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 0 30px var(--cyan);
+      border-color: transparent;
+    }
+
+    .fab-btn.main-action {
+      background: linear-gradient(135deg, var(--magenta), var(--purple));
+      color: white;
+      border: none;
+    }
+    
+    .fab-btn.main-action:hover {
+      box-shadow: 0 0 40px var(--magenta);
+    }
+
+    /* Decorative Background Shapes */
+    .bg-shape {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 1;
+      opacity: 0.4;
+      animation: float 20s infinite ease-in-out;
+    }
+    .shape-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--purple); animation-delay: 0s; }
+    .shape-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: var(--cyan); animation-delay: -5s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, 50px); }
+    }
+
+  </style>
 </head>
 <body>
 
-<header><h1>COMMAND CENTER</h1></header>
+  <div class="bg-shape shape-1"></div>
+  <div class="bg-shape shape-2"></div>
 
-<div id="queue">
-  <span id="queueIcon">Green Circle</span>
-  <span id="queueLabel">NO QUEUE</span>
-</div>
+  <header>
+    <h1 data-text="COMMAND CENTER">COMMAND CENTER</h1>
+  </header>
 
-<div class="container">
-
-  <div class="card">
-    <h2>NEXT DROP</h2>
-    <p style="font-size:1.2rem;line-height:1.8;">
-      <strong>December 5 – 10:00 AM PT</strong><br>
-      Holiday Calendar 2025 • Mega Venusaur Premium Collection • Kangaskhan ex Box + restocks
-    </p>
-    <p style="margin-top:16px;font-size:0.9rem;opacity:0.7;">Source: PokeBeach / Serebii / PokemonRestocks</p>
+  <div class="led-border queue-pill" id="queuePill">
+    <div class="status-indicator" id="statusDot"></div>
+    <div class="queue-label" id="queueLabel">SYSTEM NORMAL</div>
   </div>
 
-  <div class="card">
-    <h2>LIVE X FEED</h2>
-    <div id="feed" style="display:flex;flex-direction:column;gap:14px;">
-      <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:14px;border-left:4px solid var(--border);">
-        Queue live on US Pokémon Center! • <small>2m ago</small>
-      </div>
-      <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:14px;border-left:4px solid var(--border);">
-        Holiday Calendar confirmed • <small>8m ago</small>
+  <div class="dashboard">
+
+    <div class="led-border card">
+      <div class="card-content">
+        <h2>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+          Supply Drop
+        </h2>
+        <div style="font-size: 1.1rem; line-height: 1.6; color: #fff;">
+          <strong style="color:var(--cyan); font-size:1.3rem; display:block; margin-bottom:8px;">Dec 05 • 10:00 AM PT</strong>
+          Holiday Calendar 2025<br>
+          Mega Venusaur PC<br>
+          Kangaskhan ex Box
+        </div>
+        <div style="margin-top:25px; font-size:0.85rem; color:rgba(255,255,255,0.5); border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">
+          PROBABILITY: HIGH
+        </div>
       </div>
     </div>
+
+    <div class="led-border card">
+      <div class="card-content">
+        <h2>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" /></svg>
+          Live Intel
+        </h2>
+        <div class="intel-list" id="intelList">
+          <div class="intel-item fresh">
+            <div>Queue detected (US)</div>
+            <span class="time">NOW</span>
+          </div>
+          <div class="intel-item">
+            <div>Venusaur Image Loaded</div>
+            <span class="time">12m</span>
+          </div>
+          <div class="intel-item">
+            <div>Site Traffic Spike</div>
+            <span class="time">24m</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-</div>
+  <div class="fab-container">
+    
+    <button class="fab-btn main-action" onclick="window.open('https://www.pokemoncenter.com/', '_blank')" title="Open Site">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+    </button>
 
-<div class="fab">
-  <button class="site" onclick="window.open('https://www.pokemoncenter.com','_blank')" title="Open Pokémon Center">GO</button>
-  <button onclick="location.reload()" title="Refresh">Refresh</button>
-  <button id="sound" title="Toggle Sound">Sound</button>
-  <button onclick="Notification.requestPermission()" title="Notifications">Bell</button>
-</div>
+    <button class="fab-btn" id="refreshBtn" title="Scan Now">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+    </button>
 
-<script>
-  const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
-  let queueLive = false;
-  setInterval(()=>{
-    const live = Math.random()<0.05;
-    if(live && !queueLive){
-      document.getElementById('queueIcon').textContent = 'Red Circle';
-      document.getElementById('queueLabel').textContent = 'QUEUE LIVE';
-      document.getElementById('queue').classList.add('live');
-      sound.play();
-      queueLive = true;
+    <button class="fab-btn" id="soundBtn" title="Toggle Audio">
+      <svg id="soundIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+    </button>
+
+    <button class="fab-btn" id="notifyBtn" title="Notifications">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+    </button>
+
+  </div>
+
+  <script>
+    let isQueueLive = false;
+    let soundOn = true;
+    // Using a reliable beep sound
+    const alertSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3');
+
+    const soundBtn = document.getElementById('soundBtn');
+    const soundIcon = document.getElementById('soundIcon');
+    const pill = document.getElementById('queuePill');
+    const dot = document.getElementById('statusDot');
+    const label = document.getElementById('queueLabel');
+
+    // Toggle Sound Icon
+    soundBtn.onclick = () => { 
+      soundOn = !soundOn;
+      soundBtn.style.color = soundOn ? 'var(--cyan)' : '#555';
+    };
+
+    document.getElementById('notifyBtn').onclick = () => {
+      Notification.requestPermission().then(perm => {
+        if(perm === 'granted') alert("Systems Armed");
+      });
+    };
+
+    document.getElementById('refreshBtn').onclick = () => {
+      const btn = document.getElementById('refreshBtn');
+      btn.style.transform = 'rotate(360deg)';
+      setTimeout(() => btn.style.transform = 'none', 500);
+      scan();
+    };
+
+    function scan() {
+      // Simulating a random status for demo purposes
+      const live = Math.random() > 0.7; // 30% chance of "Live" for demo
+
+      if (live) {
+        if (!isQueueLive) {
+          // State Change: To Live
+          isQueueLive = true;
+          dot.classList.add('alert');
+          label.textContent = 'QUEUE DETECTED';
+          label.style.color = 'var(--magenta)';
+          label.style.textShadow = '0 0 20px var(--magenta)';
+          
+          if (soundOn) alertSound.play();
+          
+          if (Notification.permission === 'granted') {
+            new Notification("COMMAND CENTER", { body: "QUEUE IS LIVE!" });
+          }
+        }
+      } else {
+        if (isQueueLive || !isQueueLive) {
+           // State Change: To Normal
+           isQueueLive = false;
+           dot.classList.remove('alert');
+           label.textContent = 'SYSTEM NORMAL';
+           label.style.color = '#fff';
+           label.style.textShadow = '0 0 10px rgba(0,255,255,0.5)';
+        }
+      }
     }
-  },8000);
-</script>
+
+    // Initial scan
+    scan();
+    setInterval(scan, 8000);
+  </script>
 </body>
 </html>
