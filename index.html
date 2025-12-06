@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>USA COMMAND CENTER v11 • FILTER BY STORE + ENHANCED SEARCH</title>
+<title>USA COMMAND CENTER v12 • LIVE IN-STOCK STATUS PER DROP</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
     :root {
@@ -14,6 +14,7 @@
         --cyan: #00eeff;
         --pink: #ff00aa;
         --gold: #ffd700;
+        --safe: #00ff88;
         --text: #e0f8ff;
         --text-dim: #88c8e0;
         --pc: #0088ff;
@@ -114,6 +115,7 @@
         transform:translateX(12px);background:rgba(30,40,70,0.6);
         border-left-color:var(--cyan);box-shadow:0 10px 30px rgba(0,0,0,0.4);
     }
+    .drop-item.live { border-left-color: var(--safe); background: rgba(0,255,136,0.1); }
     .badges{
         display:flex;gap:8px;flex-wrap:wrap;margin-right:12px;
     }
@@ -129,6 +131,9 @@
     .gamestop-badge{background:var(--gamestop);}
     .amazon-badge{background:var(--amazon);}
     .multi-badge{background:var(--gold);}
+    .stock-status { font-size: 0.85rem; margin-left: 10px; padding: 4px 8px; border-radius: 12px; font-weight: bold; }
+    .stock-live { background: var(--safe); color: #000; }
+    .stock-out { background: #ff4444; color: #fff; }
     .date{font-family:'Orbitron',sans-serif;font-size:1.3rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--text);}
     .conf{font-size:0.88rem;opacity:0.9;color:var(--cyan);}
     .name{font-size:1.32rem;font-weight:600;margin:10px 0 6px;color:var(--text);}
@@ -160,8 +165,8 @@
 </head>
 <body>
 
-<h1>COMMAND CENTER v11</h1>
-<div class="tagline">USA • TRUE DARK • GLASS • STORE FILTERS + ENHANCED SEARCH</div>
+<h1>COMMAND CENTER v12</h1>
+<div class="tagline">USA • TRUE DARK • GLASS • LIVE STOCK PER DROP</div>
 
 <div class="search-section">
     <input type="text" id="searchInput" placeholder="Search: Prismatic, Mega, ETB..." autocomplete="off">
@@ -192,7 +197,7 @@
 
 <div class="glass">
     <h2 style="text-align:center;color:var(--cyan);font-family:'Orbitron',sans-serif;margin-bottom:22px;">
-        LIVE USA DROP RADAR <span style="font-size:0.7rem;">(Dec 6, 2025+ • Real Scraped + PC Boosted)</span>
+        LIVE USA DROP RADAR <span style="font-size:0.7rem;">(Dec 6, 2025+ • Stock Status Per Store)</span>
     </h2>
     <div id="dropList">Loading live intel...</div>
 </div>
@@ -216,18 +221,18 @@ let lastAlert = {pc:false,target:true,walmart:true,sams:false,bestbuy:false,game
 let activeFilters = ['all'];
 
 const drops = [
-    {date:"2025-12-09",name:"Prismatic Evolutions ETB Bundle (In-Store Only, 10-Pack)",stores:["sams"],conf:98,src:"X @pokepullzhq"},
-    {date:"2025-12-10",name:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection",stores:["walmart","target","amazon","pc"],conf:100,src:"PokeBeach Official"},
-    {date:"2025-12-12",name:"Crown Zenith Morpeko Playmat Collection Restock",stores:["pc"],conf:97,src:"PokeBeach + X @pokemoninstock"},
-    {date:"2025-12-15",name:"Sam's Club Holiday Bundle (12 Packs + Accessories)",stores:["sams"],conf:94,src:"X @PokePullz"},
-    {date:"2025-12-17",name:"B1a Themed Booster Pack (100+ New Cards)",stores:["pc"],conf:95,src:"GameRant"},
-    {date:"2025-12-19",name:"Start Deck 100 Battle Collection (Tera Koraidon ex, Miraidon ex, Registeel ex, Hoopa)",stores:["target","walmart","bestbuy","gamestop"],conf:90,src:"PokeBeach"},
-    {date:"2025-12-31",name:"Blaziken ex & Volcanion ex Premium Collection (Holiday Exclusive Restock Waves)",stores:["amazon","walmart"],conf:99,src:"X @TCGTracker"},
-    {date:"2026-01-08",name:"Ascended Heroes ETB Preorders Go Live",stores:["bestbuy","pc"],conf:100,src:"IGN Schedule + X @PokemonDealsTCG"},
-    {date:"2026-01-30",name:"Mega Evolution: Ascended Heroes Main Set (290+ Cards w/ Mega ex & Tera ex)",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],conf:100,src:"ICv2 Calendar"},
-    {date:"2026-02-07",name:"151 Blooming Waters Premium Collection + Prismatic Evolutions Mini Tin",stores:["pc","target"],conf:95,src:"Reddit r/PokemonTCG"},
-    {date:"2026-02-20",name:"Mega Evolution: Ascended Heroes ETB & Mini Tins",stores:["bestbuy","gamestop","target"],conf:100,src:"ICv2"},
-    {date:"2026-03-20",name:"Mega Evolution: Ascended Heroes Premium Poster Collection (w/ Mega Gardevoir ex or Mega Locario ex Promo)",stores:["pc"],conf:95,src:"ICv2"}
+    {date:"2025-12-09",name:"Prismatic Evolutions ETB Bundle (In-Store Only, 10-Pack)",stores:["sams"],stockStatus:{"sams":"live"},conf:98,src:"X @pokepullzhq"},
+    {date:"2025-12-10",name:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection",stores:["walmart","target","amazon","pc"],stockStatus:{"walmart":"live","target":"live","amazon":"out","pc":"out"},conf:100,src:"PokeBeach Official"},
+    {date:"2025-12-12",name:"Crown Zenith Morpeko Playmat Collection Restock",stores:["pc"],stockStatus:{"pc":"out"},conf:97,src:"PokeBeach + X @pokemoninstock"},
+    {date:"2025-12-15",name:"Sam's Club Holiday Bundle (12 Packs + Accessories)",stores:["sams"],stockStatus:{"sams":"out"},conf:94,src:"X @PokePullz"},
+    {date:"2025-12-17",name:"B1a Themed Booster Pack (100+ New Cards)",stores:["pc"],stockStatus:{"pc":"out"},conf:95,src:"GameRant"},
+    {date:"2025-12-19",name:"Start Deck 100 Battle Collection (Tera Koraidon ex, Miraidon ex, Registeel ex, Hoopa)",stores:["target","walmart","bestbuy","gamestop"],stockStatus:{"target":"live","walmart":"live","bestbuy":"out","gamestop":"out"},conf:90,src:"PokeBeach"},
+    {date:"2025-12-31",name:"Blaziken ex & Volcanion ex Premium Collection (Holiday Exclusive Restock Waves)",stores:["amazon","walmart"],stockStatus:{"amazon":"live","walmart":"out"},conf:99,src:"X @TCGTracker"},
+    {date:"2026-01-08",name:"Ascended Heroes ETB Preorders Go Live",stores:["bestbuy","pc"],stockStatus:{"bestbuy":"out","pc":"out"},conf:100,src:"IGN Schedule + X @PokemonDealsTCG"},
+    {date:"2026-01-30",name:"Mega Evolution: Ascended Heroes Main Set (290+ Cards w/ Mega ex & Tera ex)",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],stockStatus:{"pc":"out","target":"out","walmart":"out","amazon":"out","bestbuy":"out","gamestop":"out"},conf:100,src:"ICv2 Calendar"},
+    {date:"2026-02-07",name:"151 Blooming Waters Premium Collection + Prismatic Evolutions Mini Tin",stores:["pc","target"],stockStatus:{"pc":"out","target":"out"},conf:95,src:"Reddit r/PokemonTCG"},
+    {date:"2026-02-20",name:"Mega Evolution: Ascended Heroes ETB & Mini Tins",stores:["bestbuy","gamestop","target"],stockStatus:{"bestbuy":"out","gamestop":"out","target":"out"},conf:100,src:"ICv2"},
+    {date:"2026-03-20",name:"Mega Evolution: Ascended Heroes Premium Poster Collection (w/ Mega Gardevoir ex or Mega Locario ex Promo)",stores:["pc"],stockStatus:{"pc":"out"},conf:95,src:"ICv2"}
 ];
 
 function render(filter = "", selectedStores = []) {
@@ -268,7 +273,12 @@ function render(filter = "", selectedStores = []) {
         const badgesHTML = d.stores.map(store => {
             const name = store.toUpperCase();
             const cls = store + "-badge";
-            return `<span class="badge ${cls}">${name}</span>`;
+            const stock = d.stockStatus[store] || "out";
+            const stockClass = stock === "live" ? "stock-live" : "stock-out";
+            const stockText = stock === "live" ? "IN STOCK" : "OUT";
+            const isLive = stock === "live";
+            item.classList.toggle("live", isLive); // Highlight if any live
+            return `<span class="badge ${cls}"><span class="stock-status ${stockClass}">${stockText}</span> ${name}</span>`;
         }).join("");
 
         const conf = d.conf >= 98 ? "💎 CONFIRMED" : d.conf >= 92 ? "🔥 HIGH" : "⚡ LIKELY";
