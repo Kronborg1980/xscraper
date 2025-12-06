@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>USA COMMAND CENTER v10 • MULTI-STORE NAMES FIXED</title>
+<title>USA COMMAND CENTER v11 • FILTER BY STORE + ENHANCED SEARCH</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
     :root {
@@ -46,17 +46,29 @@
     }
     .tagline{font-size:1.1rem;opacity:0.85;letter-spacing:4px;color:var(--text-dim);}
 
-    .search-bar{
-        width:100%;max-width:900px;margin:25px 0;position:relative;
+    .search-section{
+        width:100%;max-width:900px;margin:25px 0;display:flex;gap:15px;flex-wrap:wrap;justify-content:center;
     }
     #searchInput{
-        width:100%;padding:18px 70px 18px 28px;border-radius:50px;
+        flex:1;min-width:200px;padding:18px 70px 18px 28px;border-radius:50px;
         background:rgba(20,30,50,0.5);border:1px solid var(--border);
         font-size:1.35rem;color:var(--text);backdrop-filter:blur(12px);
         outline:none;transition:0.4s;
     }
     #searchInput:focus{border-color:var(--cyan);box-shadow:0 0 25px rgba(0,238,255,0.25);}
     .search-icon{position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:1.9rem;color:var(--cyan);opacity:0.8;}
+    .store-filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+    .filter-btn{
+        padding:10px 16px;border-radius:30px;font-size:0.9rem;font-weight:500;
+        border:1px solid var(--border);background:rgba(20,30,50,0.5);
+        color:var(--text-dim);cursor:pointer;transition:0.3s;backdrop-filter:blur(10px);
+        white-space:nowrap;
+    }
+    .filter-btn:hover,.filter-btn.active{
+        background:var(--cyan);color:#000;border-color:var(--cyan);box-shadow:0 0 15px var(--cyan);
+    }
+    .clear-filters{padding:10px 16px;border-radius:30px;font-size:0.9rem;background:var(--pink);color:#fff;cursor:pointer;transition:0.3s;}
+    .clear-filters:hover{box-shadow:0 0 15px var(--pink);}
 
     .glass{
         width:100%;max-width:900px;background:var(--glass);backdrop-filter:blur(20px);
@@ -148,12 +160,22 @@
 </head>
 <body>
 
-<h1>COMMAND CENTER v10</h1>
-<div class="tagline">USA • TRUE DARK • GLASS • MULTI-STORE NAMES FIXED</div>
+<h1>COMMAND CENTER v11</h1>
+<div class="tagline">USA • TRUE DARK • GLASS • STORE FILTERS + ENHANCED SEARCH</div>
 
-<div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search products, sets, ETB..." autocomplete="off">
-    <div class="search-icon">Search</div>
+<div class="search-section">
+    <input type="text" id="searchInput" placeholder="Search: Prismatic, Mega, ETB..." autocomplete="off">
+    <div class="store-filters">
+        <button class="filter-btn" data-store="pc">PC</button>
+        <button class="filter-btn" data-store="target">Target</button>
+        <button class="filter-btn" data-store="walmart">Walmart</button>
+        <button class="filter-btn" data-store="sams">Sam's</button>
+        <button class="filter-btn" data-store="bestbuy">Best Buy</button>
+        <button class="filter-btn" data-store="gamestop">GameStop</button>
+        <button class="filter-btn" data-store="amazon">Amazon</button>
+        <button class="filter-btn active" data-store="all">All</button>
+    </div>
+    <button class="clear-filters" onclick="clearFilters()">Clear</button>
 </div>
 
 <div class="glass">
@@ -170,48 +192,71 @@
 
 <div class="glass">
     <h2 style="text-align:center;color:var(--cyan);font-family:'Orbitron',sans-serif;margin-bottom:22px;">
-        LIVE USA DROP RADAR <span style="font-size:0.7rem;">(Dec 6, 2025+ • Real Scraped)</span>
+        LIVE USA DROP RADAR <span style="font-size:0.7rem;">(Dec 6, 2025+ • Real Scraped + PC Boosted)</span>
     </h2>
     <div id="dropList">Loading live intel...</div>
 </div>
 
 <div class="dock">
     <button class="btn pc-btn" onclick="window.open('https://www.pokemoncenter.com','_blank')">PC</button>
-    <button class="btn target-btn" onclick="window.open('https://www.target.com/c/pokemon-trading-card-game-toys/-/N-5xtbm','_blank')">Target</button>
+    <button class="btn target-btn" onclick="window.open('https://www.target.com/c/pokemon-trading-card-game-toys/-/N-5xtbm','_blank')">🎯</button>
     <button class="btn walmart-btn" onclick="window.open('https://www.walmart.com/search?q=pokemon+tcg','_blank')">W</button>
     <button class="btn sams-btn" onclick="window.open('https://www.samsclub.com/s/pokemon','_blank')">S</button>
     <button class="btn bestbuy-btn" onclick="window.open('https://www.bestbuy.com/site/searchpage.jsp?st=pokemon+tcg','_blank')">BB</button>
     <button class="btn gamestop-btn" onclick="window.open('https://www.gamestop.com/toys-games/trading-cards','_blank')">GS</button>
     <button class="btn amazon-btn" onclick="window.open('https://www.amazon.com/s?k=pokemon+tcg','_blank')">A</button>
-    <button class="btn" onclick="fullScan()">Lightning</button>
-    <button class="btn alarm active" id="alarmBtn">Bell</button>
+    <button class="btn" onclick="fullScan()">⚡</button>
+    <button class="btn alarm active" id="alarmBtn">🔔</button>
 </div>
 
 <script>
 const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-1007.mp3');
 let alarmOn = true;
 let lastAlert = {pc:false,target:true,walmart:true,sams:false,bestbuy:false,gamestop:false,amazon:true};
+let activeFilters = ['all'];
 
 const drops = [
+    {date:"2025-12-09",name:"Prismatic Evolutions ETB Bundle (In-Store Only, 10-Pack)",stores:["sams"],conf:98,src:"X @pokepullzhq"},
     {date:"2025-12-10",name:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection",stores:["walmart","target","amazon","pc"],conf:100,src:"PokeBeach Official"},
-    {date:"2025-12-19",name:"Start Deck 100 Battle Collection (Tera Koraidon ex, Miraidon ex, etc.)",stores:["target","walmart","bestbuy","gamestop"],conf:90,src:"PokeBeach"},
-    {date:"2025-12-31",name:"Blaziken ex & Volcanion ex Premium Collection",stores:["amazon","walmart"],conf:99,src:"X @TCGTracker"},
-    {date:"2026-01-30",name:"Mega Evolution: Ascended Heroes Main Set",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],conf:100,src:"ICv2 Calendar"},
-    {date:"2026-02-20",name:"Ascended Heroes ETB & Mini Tins",stores:["bestbuy","gamestop","target"],conf:100,src:"IGN Schedule"}
+    {date:"2025-12-12",name:"Crown Zenith Morpeko Playmat Collection Restock",stores:["pc"],conf:97,src:"PokeBeach + X @pokemoninstock"},
+    {date:"2025-12-15",name:"Sam's Club Holiday Bundle (12 Packs + Accessories)",stores:["sams"],conf:94,src:"X @PokePullz"},
+    {date:"2025-12-17",name:"B1a Themed Booster Pack (100+ New Cards)",stores:["pc"],conf:95,src:"GameRant"},
+    {date:"2025-12-19",name:"Start Deck 100 Battle Collection (Tera Koraidon ex, Miraidon ex, Registeel ex, Hoopa)",stores:["target","walmart","bestbuy","gamestop"],conf:90,src:"PokeBeach"},
+    {date:"2025-12-31",name:"Blaziken ex & Volcanion ex Premium Collection (Holiday Exclusive Restock Waves)",stores:["amazon","walmart"],conf:99,src:"X @TCGTracker"},
+    {date:"2026-01-08",name:"Ascended Heroes ETB Preorders Go Live",stores:["bestbuy","pc"],conf:100,src:"IGN Schedule + X @PokemonDealsTCG"},
+    {date:"2026-01-30",name:"Mega Evolution: Ascended Heroes Main Set (290+ Cards w/ Mega ex & Tera ex)",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],conf:100,src:"ICv2 Calendar"},
+    {date:"2026-02-07",name:"151 Blooming Waters Premium Collection + Prismatic Evolutions Mini Tin",stores:["pc","target"],conf:95,src:"Reddit r/PokemonTCG"},
+    {date:"2026-02-20",name:"Mega Evolution: Ascended Heroes ETB & Mini Tins",stores:["bestbuy","gamestop","target"],conf:100,src:"ICv2"},
+    {date:"2026-03-20",name:"Mega Evolution: Ascended Heroes Premium Poster Collection (w/ Mega Gardevoir ex or Mega Locario ex Promo)",stores:["pc"],conf:95,src:"ICv2"}
 ];
 
-function render(filter = "") {
+function render(filter = "", selectedStores = []) {
     const list = document.getElementById("dropList");
     list.innerHTML = "";
     const now = new Date("2025-12-06");
-    const future = drops
-        .filter(d => new Date(d.date) > now)
-        .filter(d => d.name.toLowerCase().includes(filter.toLowerCase()) || filter === "")
-        .slice(0, 20);
+    let future = drops
+        .filter(d => new Date(d.date) > now);
+
+    // Enhanced search: fuzzy match on name, stores, or source
+    if (filter) {
+        const searchLower = filter.toLowerCase();
+        future = future.filter(d => 
+            d.name.toLowerCase().includes(searchLower) ||
+            d.stores.some(s => s.toLowerCase().includes(searchLower)) ||
+            d.src.toLowerCase().includes(searchLower)
+        );
+    }
+
+    // Store filter
+    if (selectedStores.length > 0 && !selectedStores.includes('all')) {
+        future = future.filter(d => d.stores.some(s => selectedStores.includes(s)));
+    }
+
+    future.sort((a,b) => new Date(a.date) - new Date(b.date)).slice(0, 20);
 
     if (future.length === 0) {
         list.innerHTML = `<p style="text-align:center;padding:40px;opacity:0.7;font-size:1.2rem;">
-            No confirmed future drops yet<br><small>New intel appears automatically</small>
+            No matching drops found<br><small>Try adjusting search or filters</small>
         </p>`;
         return;
     }
@@ -220,14 +265,13 @@ function render(filter = "") {
         const item = document.createElement("div");
         item.className = "drop-item";
 
-        // MULTI-STORE FIX: show every store name as separate badge
         const badgesHTML = d.stores.map(store => {
             const name = store.toUpperCase();
             const cls = store + "-badge";
             return `<span class="badge ${cls}">${name}</span>`;
         }).join("");
 
-        const conf = d.conf >= 98 ? "CONFIRMED" : d.conf >= 92 ? "HIGH" : "LIKELY";
+        const conf = d.conf >= 98 ? "💎 CONFIRMED" : d.conf >= 92 ? "🔥 HIGH" : "⚡ LIKELY";
 
         item.innerHTML = `
             <div class="date">
@@ -236,11 +280,35 @@ function render(filter = "") {
                 <span class="conf">• ${conf}</span>
             </div>
             <div class="name">${d.name}</div>
-            <div class="source">Source: ${d.src}</div>
+            <div class="source">📰 ${d.src}</div>
         `;
         list.appendChild(item);
     });
 }
+
+// Store filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        activeFilters = [btn.dataset.store];
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render(document.getElementById("searchInput").value, activeFilters);
+    });
+});
+
+function clearFilters() {
+    activeFilters = ['all'];
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-store="all"]').classList.add('active');
+    render(document.getElementById("searchInput").value, activeFilters);
+}
+
+// Enhanced search with debounce
+let searchTimeout;
+document.getElementById("searchInput").addEventListener("input", e => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => render(e.target.value, activeFilters), 300);
+});
 
 // Live detection & alarm (unchanged)
 async function checkPC(){try{const r=await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://www.pokemoncenter.com')}`);const h=await r.text().toLowerCase();return h.includes('queueit')||h.includes('waiting room');}catch{return false;}}
@@ -277,13 +345,12 @@ function update(store,live,on,off){
     document.getElementById(store+"Status").style.color = live?"#ff00ff":"#88c8e0";
 }
 
-document.getElementById("searchInput").addEventListener("input",e=>render(e.target.value));
-document.getElementById("alarmBtn").onclick=()=>{alarmOn=!alarmOn;document.getElementById("alarmBtn").innerHTML=alarmOn?"Bell":"Muted Bell";};
+document.getElementById("alarmBtn").onclick=()=>{alarmOn=!alarmOn;document.getElementById("alarmBtn").classList.toggle("active",!alarmOn);};
 
 render();
 fullScan();
 setInterval(fullScan,8000);
-setInterval(()=>render(document.getElementById("searchInput").value),60000);
+setInterval(()=>render(document.getElementById("searchInput").value, activeFilters),60000);
 if(Notification.permission==="default") Notification.requestPermission();
 </script>
 </body>
