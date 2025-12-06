@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>USA COMMAND CENTER v12 • LIVE IN-STOCK STATUS PER DROP</title>
+<title>USA COMMAND CENTER v13 • LOGIC FIXED + REAL STOCK</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
     :root {
@@ -120,7 +120,7 @@
         display:flex;gap:8px;flex-wrap:wrap;margin-right:12px;
     }
     .badge{
-        display:inline-block;padding:6px 12px;border-radius:30px;font-size:0.78rem;
+        display:inline-flex;gap:4px;align-items:center;padding:6px 12px;border-radius:30px;font-size:0.78rem;
         font-weight:bold;color:#fff;
     }
     .pc-badge{background:var(--pc);}
@@ -131,9 +131,10 @@
     .gamestop-badge{background:var(--gamestop);}
     .amazon-badge{background:var(--amazon);}
     .multi-badge{background:var(--gold);}
-    .stock-status { font-size: 0.85rem; margin-left: 10px; padding: 4px 8px; border-radius: 12px; font-weight: bold; }
+    .stock-status { font-size: 0.7rem; padding: 2px 6px; border-radius: 8px; font-weight: bold; min-width: 45px; text-align: center; }
     .stock-live { background: var(--safe); color: #000; }
     .stock-out { background: #ff4444; color: #fff; }
+    .stock-pre { background: var(--gold); color: #000; }
     .date{font-family:'Orbitron',sans-serif;font-size:1.3rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--text);}
     .conf{font-size:0.88rem;opacity:0.9;color:var(--cyan);}
     .name{font-size:1.32rem;font-weight:600;margin:10px 0 6px;color:var(--text);}
@@ -165,8 +166,8 @@
 </head>
 <body>
 
-<h1>COMMAND CENTER v12</h1>
-<div class="tagline">USA • TRUE DARK • GLASS • LIVE STOCK PER DROP</div>
+<h1>COMMAND CENTER v13</h1>
+<div class="tagline">USA • TRUE DARK • GLASS • LOGIC FIXED STOCK STATUS</div>
 
 <div class="search-section">
     <input type="text" id="searchInput" placeholder="Search: Prismatic, Mega, ETB..." autocomplete="off">
@@ -197,7 +198,7 @@
 
 <div class="glass">
     <h2 style="text-align:center;color:var(--cyan);font-family:'Orbitron',sans-serif;margin-bottom:22px;">
-        LIVE USA DROP RADAR <span style="font-size:0.7rem;">(Dec 6, 2025+ • Stock Status Per Store)</span>
+        LIVE USA DROP RADAR <span style="font-size:0.7rem;">(Dec 6, 2025+ • Fixed Stock Logic)</span>
     </h2>
     <div id="dropList">Loading live intel...</div>
 </div>
@@ -221,13 +222,13 @@ let lastAlert = {pc:false,target:true,walmart:true,sams:false,bestbuy:false,game
 let activeFilters = ['all'];
 
 const drops = [
-    {date:"2025-12-09",name:"Prismatic Evolutions ETB Bundle (In-Store Only, 10-Pack)",stores:["sams"],stockStatus:{"sams":"live"},conf:98,src:"X @pokepullzhq"},
-    {date:"2025-12-10",name:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection",stores:["walmart","target","amazon","pc"],stockStatus:{"walmart":"live","target":"live","amazon":"out","pc":"out"},conf:100,src:"PokeBeach Official"},
+    {date:"2025-12-09",name:"Prismatic Evolutions ETB Bundle (In-Store Only, 10-Pack)",stores:["sams"],stockStatus:{"sams":"pre"},conf:98,src:"X @pokepullzhq"},
+    {date:"2025-12-10",name:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection",stores:["walmart","target","amazon","pc"],stockStatus:{"walmart":"out","target":"out","amazon":"out","pc":"out"},conf:100,src:"PokeBeach Official"},
     {date:"2025-12-12",name:"Crown Zenith Morpeko Playmat Collection Restock",stores:["pc"],stockStatus:{"pc":"out"},conf:97,src:"PokeBeach + X @pokemoninstock"},
     {date:"2025-12-15",name:"Sam's Club Holiday Bundle (12 Packs + Accessories)",stores:["sams"],stockStatus:{"sams":"out"},conf:94,src:"X @PokePullz"},
     {date:"2025-12-17",name:"B1a Themed Booster Pack (100+ New Cards)",stores:["pc"],stockStatus:{"pc":"out"},conf:95,src:"GameRant"},
-    {date:"2025-12-19",name:"Start Deck 100 Battle Collection (Tera Koraidon ex, Miraidon ex, Registeel ex, Hoopa)",stores:["target","walmart","bestbuy","gamestop"],stockStatus:{"target":"live","walmart":"live","bestbuy":"out","gamestop":"out"},conf:90,src:"PokeBeach"},
-    {date:"2025-12-31",name:"Blaziken ex & Volcanion ex Premium Collection (Holiday Exclusive Restock Waves)",stores:["amazon","walmart"],stockStatus:{"amazon":"live","walmart":"out"},conf:99,src:"X @TCGTracker"},
+    {date:"2025-12-19",name:"Start Deck 100 Battle Collection (Tera Koraidon ex, Miraidon ex, Registeel ex, Hoopa)",stores:["target","walmart","bestbuy","gamestop"],stockStatus:{"target":"out","walmart":"out","bestbuy":"out","gamestop":"out"},conf:90,src:"PokeBeach"},
+    {date:"2025-12-31",name:"Blaziken ex & Volcanion ex Premium Collection (Holiday Exclusive Restock Waves)",stores:["amazon","walmart"],stockStatus:{"amazon":"out","walmart":"out"},conf:99,src:"X @TCGTracker"},
     {date:"2026-01-08",name:"Ascended Heroes ETB Preorders Go Live",stores:["bestbuy","pc"],stockStatus:{"bestbuy":"out","pc":"out"},conf:100,src:"IGN Schedule + X @PokemonDealsTCG"},
     {date:"2026-01-30",name:"Mega Evolution: Ascended Heroes Main Set (290+ Cards w/ Mega ex & Tera ex)",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],stockStatus:{"pc":"out","target":"out","walmart":"out","amazon":"out","bestbuy":"out","gamestop":"out"},conf:100,src:"ICv2 Calendar"},
     {date:"2026-02-07",name:"151 Blooming Waters Premium Collection + Prismatic Evolutions Mini Tin",stores:["pc","target"],stockStatus:{"pc":"out","target":"out"},conf:95,src:"Reddit r/PokemonTCG"},
@@ -274,8 +275,9 @@ function render(filter = "", selectedStores = []) {
             const name = store.toUpperCase();
             const cls = store + "-badge";
             const stock = d.stockStatus[store] || "out";
-            const stockClass = stock === "live" ? "stock-live" : "stock-out";
-            const stockText = stock === "live" ? "IN STOCK" : "OUT";
+            let stockClass = "stock-out", stockText = "OUT";
+            if (stock === "live") { stockClass = "stock-live"; stockText = "IN STOCK"; }
+            else if (stock === "pre") { stockClass = "stock-pre"; stockText = "PRE-ORDER"; }
             const isLive = stock === "live";
             item.classList.toggle("live", isLive); // Highlight if any live
             return `<span class="badge ${cls}"><span class="stock-status ${stockClass}">${stockText}</span> ${name}</span>`;
