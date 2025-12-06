@@ -225,33 +225,45 @@ let alarmOn = true;
 let lastAlert = {pc:false,target:true,walmart:true,sams:false,bestbuy:false,gamestop:false,amazon:true};
 let activeFilters = ['all'];
 
-// Real product URLs (Dec 2025)
+// Real product URLs (updated based on latest data as of Dec 2025)
 const productLinks = {
-    "Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection": {
-        pc: "https://www.pokemoncenter.com/product/728-85283/paldean-fates-premium-collection-great-tusk-ex",
-        walmart: "https://www.walmart.com/ip/Great-Tusk-ex-Premium-Collection/5239481234",
-        target: "https://www.target.com/p/paldean-fates-premium-collection-great-tusk-ex/-/A-91234567",
-        amazon: "https://www.amazon.com/Paldean-Fates-Premium-Collection-Great-Tusk/dp/B0DXYZ123"
+    "Mega Evolution Ascended Heroes Blister Pack & Collection": {
+        pc: "https://www.pokemoncenter.com/search?q=ascended+heroes",
+        walmart: "https://www.walmart.com/search?q=mega+evolution+ascended+heroes",
+        target: "https://www.target.com/s?searchTerm=mega+evolution+ascended+heroes",
+        amazon: "https://www.amazon.com/s?k=mega+evolution+ascended+heroes",
+        bestbuy: "https://www.bestbuy.com/site/searchpage.jsp?st=mega+evolution+ascended+heroes",
+        gamestop: "https://www.gamestop.com/search/?q=mega+evolution+ascended+heroes"
     },
-    "Crown Zenith Morpeko Playmat Collection Restock": {
-        pc: "https://www.pokemoncenter.com/product/728-85321/crown-zenith-morpeko-playmat-collection"
-    },
-    "Ascended Heroes ETB Preorders Go Live": {
-        bestbuy: "https://www.bestbuy.com/site/ascended-heroes-elite-trainer-box/1234567.p",
-        pc: "https://www.pokemoncenter.com/product/728-85345/ascended-heroes-elite-trainer-box"
-    },
-    "Mega Evolution: Ascended Heroes Main Set": {
-        pc: "https://www.pokemoncenter.com/product/728-85350/mega-evolution-ascended-heroes-booster-box",
-        target: "https://www.target.com/p/mega-evolution-ascended-heroes-booster-box/-/A-98765432"
+    "Mega Evolution Ascended Heroes Elite Trainer Box & Mini Tin": {
+        pc: "https://www.pokemoncenter.com/search?q=ascended+heroes+etb",
+        walmart: "https://www.walmart.com/search?q=ascended+heroes+etb",
+        target: "https://www.target.com/s?searchTerm=ascended+heroes+etb",
+        amazon: "https://www.amazon.com/s?k=ascended+heroes+etb",
+        bestbuy: "https://www.bestbuy.com/site/searchpage.jsp?st=ascended+heroes+etb",
+        gamestop: "https://www.gamestop.com/search/?q=ascended+heroes+etb"
     }
 };
 
-const drops = [
-    {date:"2025-12-10",name:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection",stores:["walmart","target","amazon","pc"],stockStatus:{"walmart":"out","target":"out","amazon":"out","pc":"out"},conf:100,src:"PokeBeach"},
-    {date:"2025-12-12",name:"Crown Zenith Morpeko Playmat Collection Restock",stores:["pc"],stockStatus:{"pc":"out"},conf:97,src:"PokeBeach"},
-    {date:"2026-01-08",name:"Ascended Heroes ETB Preorders Go Live",stores:["bestbuy","pc"],stockStatus:{"bestbuy":"out","pc":"out"},conf:100,src:"IGN"},
-    {date:"2026-01-30",name:"Mega Evolution: Ascended Heroes Main Set (290+ Cards)",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],stockStatus:{},conf:100,src:"ICv2"}
+// Updated drops based on latest sources (Dexerto, PokeGuardian, Pokémon.com - as of Dec 6, 2025)
+let drops = [
+    {date:"2026-01-20",name:"Mega Evolution Ascended Heroes Special Set",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],stockStatus:{"pc":"pre","target":"pre","walmart":"pre","amazon":"pre","bestbuy":"pre","gamestop":"pre"},conf:100,src:"PokeGuardian"},
+    {date:"2026-01-30",name:"Mega Evolution Ascended Heroes Main Expansion (290+ Cards)",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],stockStatus:{"pc":"out","target":"out","walmart":"out","amazon":"out","bestbuy":"out","gamestop":"out"},conf:100,src:"Dexerto"},
+    {date:"2026-01-30",name:"Mega Evolution Ascended Heroes Blister Pack & Collection",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],stockStatus:{"pc":"out","target":"out","walmart":"out","amazon":"out","bestbuy":"out","gamestop":"out"},conf:100,src:"Dexerto"},
+    {date:"2026-02-20",name:"Mega Evolution Ascended Heroes Elite Trainer Box & Mini Tin",stores:["pc","target","walmart","amazon","bestbuy","gamestop"],stockStatus:{"pc":"out","target":"out","walmart":"out","amazon":"out","bestbuy":"out","gamestop":"out"},conf:100,src:"Dexerto"}
 ];
+
+// Placeholder for dynamic loading - uncomment and set your JSON URL to make it update automatically
+// async function fetchDrops() {
+//     try {
+//         const response = await fetch('https://your-server.com/drops.json'); // Replace with your JSON endpoint
+//         drops = await response.json();
+//         render();
+//     } catch (e) {
+//         console.error('Failed to fetch drops:', e);
+//     }
+// }
+// fetchDrops(); // Call on load for dynamic update
 
 function render(filter = "", selectedStores = []) {
     const list = document.getElementById("dropList");
@@ -273,7 +285,7 @@ function render(filter = "", selectedStores = []) {
     future.sort((a,b) => new Date(a.date) - new Date(b.date));
 
     if (future.length === 0) {
-        list.innerHTML = `<p style="text-align:center;padding:40px;opacity:0.7;font-size:1.2rem;">No matching drops</p>`;
+        list.innerHTML = `<p style="text-align:center;padding:40px;opacity:0.7;font-size:1.2rem;">No matching drops - check back for updates!</p>`;
         return;
     }
 
@@ -350,6 +362,7 @@ document.getElementById("searchInput").addEventListener("input", e => {
 // Placeholder for live scanning (you can expand later)
 async function fullScan() {
     console.log("Lightning scan running...");
+    // To make more dynamic, could fetch stock status here via API if available
 }
 setInterval(fullScan, 8000);
 setInterval(()=>render(document.getElementById("searchInput").value, activeFilters), 60000);
